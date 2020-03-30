@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<solver>
+  <!--<environmentMode>FULL_ASSERT</environmentMode>--><!-- To slowly prove there are no bugs in this code -->
+  <!--<moveThreadCount>AUTO</moveThreadCount>--><!-- To solve faster by saturating multiple CPU cores -->
+
+  <!--Temp delete following-->
+  <!--<scanAnnotatedClasses/>-->
+
+  <!--Temp add the following-->
+<solutionClass>au.org.thebigissue.rostering.solver.solution.Roster</solutionClass>
+
+  <!--<entityClass>au.org.thebigissue.rostering.solver.variables.Availability</entityClass>-->
+  <!--<entityClass>au.org.thebigissue.rostering.solver.variables.Facilitator</entityClass>-->
+  <entityClass>au.org.thebigissue.rostering.solver.entities.FacilitatorShift</entityClass>
+  <!--<entityClass>au.org.thebigissue.rostering.solver.variables.GuestSpeaker</entityClass>-->
+  <entityClass>au.org.thebigissue.rostering.solver.entities.GuestSpeakerShift</entityClass>
+  <!--<entityClass>au.org.thebigissue.rostering.solver.entities.Shift</entityClass>-->
+  <entityClass>au.org.thebigissue.rostering.solver.entities.Workshop</entityClass>
+  <!--<entityClass>au.org.thebigissue.rostering.solver.variables.Staff</entityClass>-->
+
+  <scoreDirectorFactory>
+    <scoreDrl>au/org/thebigissue/rostering/solver/rosteringScoreRules.drl</scoreDrl>
+  </scoreDirectorFactory>
+
+  <termination>
+    <secondsSpentLimit>10</secondsSpentLimit>
+  </termination>
+
+</solver>
