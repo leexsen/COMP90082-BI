@@ -1,5 +1,5 @@
 package au.org.thebigissue.rostering.solver.entities;
-
+/*
 import au.org.thebigissue.rostering.solver.solution.Roster;
 import au.org.thebigissue.rostering.solver.variables.Availability;
 import au.org.thebigissue.rostering.solver.variables.Facilitator;
@@ -52,3 +52,4 @@ public class ShiftTest {
     
 
 }
+ */
