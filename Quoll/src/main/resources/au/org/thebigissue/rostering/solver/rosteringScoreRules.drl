@@ -9,7 +9,7 @@ import au.org.thebigissue.rostering.solver.entities.GuestSpeakerShift;
 import au.org.thebigissue.rostering.solver.solution.Roster;
 import au.org.thebigissue.rostering.solver.entities.Workshop;
 import au.org.thebigissue.rostering.solver.variables.GuestSpeaker;
-import au.org.thebigissue.rostering.solver.variables.DummyGuest;
+//import au.org.thebigissue.rostering.solver.variables.DummyGuest;
 import au.org.thebigissue.rostering.input.RosteringImporter;
 
 global HardSoftScoreHolder scoreHolder;
@@ -73,6 +73,7 @@ rule "Guest Speaker is not trained for course"
         scoreHolder.addHardConstraintMatch(kcontext, -1);
 end
 
+/*
 // Certain Courses do not need a guest speaker
 rule "Guest speaker assigned to course that does not need a guest speaker"
     when
@@ -81,7 +82,8 @@ rule "Guest speaker assigned to course that does not need a guest speaker"
     then
         scoreHolder.addHardConstraintMatch(kcontext, -1);
 end
-
+*/
+/*
 rule "Guest speaker required, but not assigned"
     when
         Workshop($courseName : course, $guestSpeakerShift : guestSpeakerShift, facilitatorOnly == false)
@@ -89,6 +91,7 @@ rule "Guest speaker required, but not assigned"
     then
         scoreHolder.addHardConstraintMatch(kcontext, -1);
 end
+*/
 
 // Do not roster staff back-to-back if different location - facilitators
 rule "Back-to-back workshops with different location (Facilitator)"
@@ -134,27 +137,44 @@ rule "Back-to-back workshops - offsite locations (guest speakers)"
         scoreHolder.addHardConstraintMatch(kcontext, -1);
 end
 
+// A facilitator can attend a maximum of $maxSession workshops per day
+rule "Facilitator: max $maxSession(defineded in the Execl file) workshops per day"
+    when
+        FacilitatorShift($num : getNumWorkshops() > $maxSessions : maxSessions)
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -(2 ^ ($num - $maxSessions)) * 100);
+end
+
+// A guest speaker can only attend a maximum of $maxSession workshops per day
+rule "Guest speaker: max $maxSession(defineded in the Execl file) workshops per day"
+    when
+        GuestSpeakerShift($num : getNumWorkshops() > $maxSessions : maxSessions)
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -(2 ^ ($num - $maxSessions)) * 200);
+end
 
 // ############################################################################
 // Soft constraints
 // ############################################################################
 
 
-// A facilitator can attend a maximum of six workshops per day
-rule "Facilitator: max 6 workshops per day"
+/* Moved to hard constraint
+// A facilitator can attend a maximum of $maxSession workshops per day
+rule "Facilitator: max $maxSession(defineded in the Execl file) workshops per day"
     when
-        FacilitatorShift($num : getNumWorkshops() > 6)
+        FacilitatorShift($num : getNumWorkshops() > $maxSessions : maxSessions)
     then
-        scoreHolder.addSoftConstraintMatch(kcontext, -(2 ^ ($num - 6)) * 100);
+        scoreHolder.addSoftConstraintMatch(kcontext, -(2 ^ ($num - $maxSessions)) * 100);
 end
 
-// A guest speaker can only attend a maximum of 2 workshops per day
-rule "Guest speaker: max 2 workshops per day"
+// A guest speaker can only attend a maximum of $maxSession workshops per day
+rule "Guest speaker: max $maxSession(defineded in the Execl file) workshops per day"
     when
-        GuestSpeakerShift($num : getNumWorkshops() > 2)
+        GuestSpeakerShift($num : getNumWorkshops() > $maxSessions : maxSessions)
     then
-        scoreHolder.addSoftConstraintMatch(kcontext, -(2 ^ ($num - 2)) * 200);
+        scoreHolder.addSoftConstraintMatch(kcontext, -(2 ^ ($num - $maxSessions)) * 200);
 end
+*/
 
 // Maximise the utilisation of staff (time spent in workshops / total shift time)
 rule "Maximise utilisation - facilitator"

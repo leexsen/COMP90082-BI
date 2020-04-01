@@ -53,6 +53,8 @@ public abstract class Shift extends AbstractPersistable {
     // shadow variable, updated by OptaPlanner when allocating workshops
     private List<Workshop> workshopList;
 
+    private  int maxSessions;
+
     // required by OptaPlanner
     public Shift() {}
 
@@ -66,6 +68,7 @@ public abstract class Shift extends AbstractPersistable {
         this.id = id;
         this.staff = staff;
         this.date = date;
+        this.maxSessions = staff.getMaxSessions();
 
         workshopList = new ArrayList<>();
         utilisedTime = 0;
@@ -77,6 +80,10 @@ public abstract class Shift extends AbstractPersistable {
      */
     public int getNumWorkshops() {
         return workshopList.size();
+    }
+
+    public int getMaxSessions() {
+        return maxSessions;
     }
 
     public void updateUtilisedTime() {

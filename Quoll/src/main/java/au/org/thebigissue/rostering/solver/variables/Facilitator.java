@@ -4,12 +4,12 @@ public class Facilitator extends Staff {
 
     private boolean isOfficeStaff = false;
 
-    public Facilitator(String firstName, String lastName, Availability availability, String[] trained) {
-        super(firstName, lastName, availability, trained);
+    public Facilitator(String firstName, String lastName, Availability availability, int maxSessions, String[] trained) {
+        super(firstName, lastName, availability, maxSessions, trained);
     }
 
-    public Facilitator(String firstName, String lastName, Availability availability, String[] trained, boolean isOfficeStaff) {
-        super(firstName, lastName, availability, trained);
+    public Facilitator(String firstName, String lastName, Availability availability, int maxSessions, String[] trained, boolean isOfficeStaff) {
+        super(firstName, lastName, availability, maxSessions, trained);
 
         this.isOfficeStaff = isOfficeStaff;
     }

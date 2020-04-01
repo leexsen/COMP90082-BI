@@ -15,22 +15,27 @@ public class Staff extends AbstractPersistable {
     String lastName;
 
     Availability availability;
-
+    int maxSessions;
 
     String[] trained;
 
 
-    public Staff(String firstName, String lastName, Availability availability, String[] trained) {
+    public Staff(String firstName, String lastName, Availability availability, int maxSessions, String[] trained) {
 
         this.firstName = firstName;
         this.lastName = lastName;
         this.availability = availability;
+        this.maxSessions = maxSessions;
         this.trained = trained;
     }
 
     public String getName() {
 
         return (firstName + " " + lastName);
+    }
+
+    public int getMaxSessions() {
+        return maxSessions;
     }
 
     public boolean isUnavailable(LocalDateTime dateTime) {

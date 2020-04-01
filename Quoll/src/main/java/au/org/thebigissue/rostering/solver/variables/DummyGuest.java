@@ -11,7 +11,7 @@ public class DummyGuest extends GuestSpeaker{
 
     // Creates a dummy guest with no availability, no trained courses and 1 reliability
     public DummyGuest(String[] courseList){
-        super("None", "", new Availability(), courseList, 1);
+        super("None", "", new Availability(), 6, courseList, 1);
 
         EnumSet<DayOfWeek> daysOfWeek = EnumSet.allOf(DayOfWeek.class);
 

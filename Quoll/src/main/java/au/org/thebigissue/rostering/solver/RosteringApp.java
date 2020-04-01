@@ -6,34 +6,25 @@ import au.org.thebigissue.rostering.input.RosteringImporter;
 import au.org.thebigissue.rostering.output.ExcelOutput;
 import au.org.thebigissue.rostering.output.PDFOutput;
 import au.org.thebigissue.rostering.output.WordOutput;
-import au.org.thebigissue.rostering.solver.entities.FacilitatorShift;
-import au.org.thebigissue.rostering.solver.entities.GuestSpeakerShift;
-import au.org.thebigissue.rostering.solver.entities.Workshop;
 import au.org.thebigissue.rostering.solver.solution.Roster;
 import javafx.application.Platform;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
 import javafx.stage.Stage;
-import org.optaplanner.core.api.score.Score;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.core.api.score.constraint.ConstraintMatch;
 import org.optaplanner.core.api.score.constraint.ConstraintMatchTotal;
-import org.optaplanner.core.api.score.Score;
 import org.optaplanner.core.api.score.constraint.Indictment;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.api.solver.SolverFactory;
 import org.optaplanner.core.impl.score.director.ScoreDirector;
-import org.optaplanner.core.impl.score.director.ScoreDirectorFactory;
-import org.optaplanner.core.impl.score.director.ScoreDirector;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -60,7 +51,7 @@ public class RosteringApp {
                               int timeSetting,
                               boolean PDFSetting, boolean WordSetting, boolean ExcelSetting,
                               boolean StandardSetting, boolean ErrorSetting,
-                              ListView console, Stage primaryStage, ProgressBar progressBar)
+                              ListView<String> console, Stage primaryStage, ProgressBar progressBar)
             throws IOException, Exception {
 
         //Capture the output

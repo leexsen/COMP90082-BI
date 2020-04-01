@@ -211,7 +211,7 @@ public class RosteringImporter {
     }
 
 
-    public Roster createRoster(LocalDate rosterStartDate, LocalDate rosterEndDate, String excelFile) {
+    public Roster createRoster(LocalDate rosterStartDate, LocalDate rosterEndDate, String excelFile) throws IOException {
 
         this.excelFile = excelFile;
 
@@ -226,9 +226,13 @@ public class RosteringImporter {
 
         year = rosterStartDate.getYear();
 
-        ArrayList<Staff> facilitators = importStaff(FACILITATOR, rosterStartDate);
-        ArrayList<Staff> guestSpeakers = importStaff(GUEST, rosterStartDate);
+        AvailabilityImporter availabilityImporter = new AvailabilityImporter(excelFile);
+        availabilityImporter.importAvailability(rosterStartDate);
 
+        ArrayList<Staff> facilitators = availabilityImporter.getFacilitatorList();
+        ArrayList<Staff> guestSpeakers = availabilityImporter.getGuestspeakerList();
+
+        /*
         // need as many dummy guest speakers as there are courses that don't require a guest speaker
         String[] noGuestCourseList = getNoGuestCourseList();
         ArrayList<Staff> dummyGuests = dummyList(noGuestCourseList);
@@ -236,6 +240,7 @@ public class RosteringImporter {
         guestSpeakers.addAll(dummyGuests);
         //System.out.println("***************************************************************************\n" +
         // Arrays.toString(guestSpeakers.toArray()));
+        */
 
         roster.setShiftList(facilitators, guestSpeakers, rosterStartDate, rosterEndDate);
         facilitatorShifts = roster.getFacilitatorShiftList();
@@ -477,9 +482,9 @@ public class RosteringImporter {
                     //FIXME -- should we check to ensure it is unique?
 
                     if (cellContent.equalsIgnoreCase(OFFICE_STAFF_COLUMN_NAME)) {
-                        staffList.add(new Facilitator(firstName, lastName, availability, trained, true));
+                        staffList.add(new Facilitator(firstName, lastName, availability, 6, trained, true));
                     } else {
-                        staffList.add(new Facilitator(firstName, lastName, availability, trained, false));
+                        staffList.add(new Facilitator(firstName, lastName, availability, 6, trained, false));
                     }
 
                 }
@@ -494,7 +499,7 @@ public class RosteringImporter {
                     }
 
                     //FIXME -- should we check to ensure it is unique?
-                    staffList.add(new GuestSpeaker(firstName, lastName, availability, trained, reliability));
+                    staffList.add(new GuestSpeaker(firstName, lastName, availability, 6, trained, reliability));
 
                 }
 

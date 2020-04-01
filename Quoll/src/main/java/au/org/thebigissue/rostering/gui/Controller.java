@@ -48,7 +48,7 @@ public class Controller {
     private boolean ExcelSetting;
     private boolean StandardSetting; //For console
     private boolean ErrorSetting; //For console
-    private ListView console;
+    private ListView<String> console;
     private Stage primaryStage;
     private ProgressBar progressBar;
     private LocalDate startDate;
@@ -419,7 +419,7 @@ public class Controller {
     }
 
     //Set the console. This will later be fed to the threads which will adjust the console.
-    public void setConsole(ListView console) {
+    public void setConsole(ListView<String> console) {
 
         this.console = console;
 

@@ -50,7 +50,7 @@ public class App extends Application {
 
 
     //private static final TextArea console = new TextArea("Big Issue Roster Application"+"\n");
-    private static ListView console;
+    private static ListView<String> console;
 
     //The following variables have been moved to controller and should be deleted to finish refactoring process
     private static String inputExcelPath = null;
@@ -75,7 +75,7 @@ public class App extends Application {
     public void start(Stage primaryStage) throws Exception{
 
         //This can print out System.out.println information
-        console = new ListView();
+        console = new ListView<>();
 
         //Controller handles the logic
         Controller controller = new Controller(primaryStage);
@@ -463,8 +463,7 @@ public class App extends Application {
         String options[] = controller.getComboOptions();
 
         // Create a combo box
-        ComboBox comboBox =
-                new ComboBox(FXCollections.observableArrayList(options));
+        ComboBox<String> comboBox = new ComboBox<>(FXCollections.observableArrayList(options));
 
         comboBox.setOnAction(e -> {
             //timeSetting=(String)comboBox.getValue();

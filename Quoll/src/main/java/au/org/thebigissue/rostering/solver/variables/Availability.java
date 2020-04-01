@@ -56,5 +56,15 @@ public class Availability extends AbstractPersistable {
         }
     }
 
+    /**
+     * Check if the person is unavailable for the whole week.
+     */
+    public boolean unavailableAtAll() {
+        for (LocalTime[] time : weeklyAvailability.values()) {
+            if (time != null)
+                return false;
+        }
 
+        return true;
+    }
 }
