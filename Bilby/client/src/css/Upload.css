@@ -1,0 +1,15 @@
+.Upload {
+  text-align: left;
+}
+
+#uploadForm {
+  width: 100%;
+}
+
+#fileUpload {
+  display: none;
+}
+
+.container {
+  width: 350px;
+}

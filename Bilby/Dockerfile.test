@@ -1,0 +1,8 @@
+FROM bi-bilby:latest
+
+ENV NODE_ENV=development
+ENV CI=true
+
+RUN npm run ci-all
+
+CMD [ "npm", "run", "test" ]
