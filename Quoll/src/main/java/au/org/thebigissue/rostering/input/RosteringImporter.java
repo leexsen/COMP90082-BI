@@ -215,14 +215,14 @@ public class RosteringImporter {
 
         this.excelFile = excelFile;
 
-        this.nonGuestCourses = noGuestCourses();
+        // this.nonGuestCourses = noGuestCourses();
 
         Roster roster = new Roster();
         roster.setId(0L);
 
         // reads the first date and last date of the period to roster from worksheet
         // (TODO replaced by input from GUI eventually)
-        importWeekDates();
+        // importWeekDates();
 
         year = rosterStartDate.getYear();
 
@@ -246,7 +246,14 @@ public class RosteringImporter {
         facilitatorShifts = roster.getFacilitatorShiftList();
         guestSpeakerShifts = roster.getGuestSpeakerShiftList();
 
-        roster.setWorkshopList(importWorkshops(rosterStartDate, rosterEndDate, roster));
+        // roster.setWorkshopList(importWorkshops(rosterStartDate, rosterEndDate, roster));
+
+        BookingImporter bookingImporter = new BookingImporter(excelFile);
+        List<List<Workshop>> result = bookingImporter.importBookings(rosterStartDate, rosterEndDate, roster, facilitatorShifts,
+                guestSpeakerShifts, overriddenWorkshops);
+        List<Workshop> workshopList = result.get(0);
+        overriddenWorkshops = result.get(1);
+        roster.setWorkshopList(workshopList);
 
         //updating shifts in roster for the workshops that were overridden
         if(overriddenWorkshops.size() > 0)
