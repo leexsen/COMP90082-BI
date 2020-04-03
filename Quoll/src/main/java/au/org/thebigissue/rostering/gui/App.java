@@ -468,7 +468,7 @@ public class App extends Application {
         comboBox.setOnAction(e -> {
             //timeSetting=(String)comboBox.getValue();
             //controller.setTimeSetting(Integer.parseInt((String)comboBox.getValue()));
-            controller.setTimeSetting((String)comboBox.getValue());
+            controller.setTimeSetting(comboBox.getValue());
         });
 
         //comboBox.getSelectionModel().select(timeSetting);

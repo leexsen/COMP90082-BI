@@ -208,7 +208,7 @@ public class Roster extends AbstractPersistable {
 
         variance=variance/(hoursByStaff.size());
 
-        return (int) Math.round(variance);
+        return Math.round(variance);
     }
 
     public int calculateFacilitatorVariance() {

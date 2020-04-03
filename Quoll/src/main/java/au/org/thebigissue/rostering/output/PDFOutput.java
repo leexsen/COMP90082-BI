@@ -1119,7 +1119,7 @@ public class PDFOutput {
 
         int i = 0;
         for (int curPageCnt = (allPages.getCount() - 1); curPageCnt >= 0; curPageCnt--) {
-            newDoc.addPage((PDPage) allPages.get(curPageCnt));
+            newDoc.addPage(allPages.get(curPageCnt));
             i++;
         } // end for
 

@@ -47,7 +47,7 @@ import java.util.List;
 
 public class RosteringImporter {
 
-    private boolean FACILITATOR = false;
+    /*private boolean FACILITATOR = false;
     private boolean GUEST = !FACILITATOR;
 
     // tracks the courses that do not need a guest speaker
@@ -183,7 +183,7 @@ public class RosteringImporter {
 
     private final String SPEC_UNAVAIL = "Specific Unavailability 1 Start Date";
 
-    private int year;
+    private int year;*/
 
     // Shift lists, needed when manually overriding workshops
     List<FacilitatorShift> facilitatorShifts;
@@ -193,7 +193,7 @@ public class RosteringImporter {
     List<Workshop> overriddenWorkshops = new ArrayList<>();
 
     private String excelFile;
-
+    /*
     //Needed because some columns contain both numeric and string
     //Source: https://stackoverflow.com/questions/1072561/how-can-i-read-numeric-strings-in-excel-cells-as-string-not-numbers
     private String getCellAsString(Cell cell, XSSFFormulaEvaluator evaluator) {
@@ -208,7 +208,7 @@ public class RosteringImporter {
 
         return string;
 
-    }
+    }*/
 
 
     public Roster createRoster(LocalDate rosterStartDate, LocalDate rosterEndDate, String excelFile) throws IOException {
@@ -224,7 +224,7 @@ public class RosteringImporter {
         // (TODO replaced by input from GUI eventually)
         // importWeekDates();
 
-        year = rosterStartDate.getYear();
+        //year = rosterStartDate.getYear();
 
         AvailabilityImporter availabilityImporter = new AvailabilityImporter(excelFile);
         availabilityImporter.importAvailability(rosterStartDate);
@@ -262,7 +262,7 @@ public class RosteringImporter {
         return roster;
     }
 
-    // This imports the facilitators first and last names and their availability
+    /*// This imports the facilitators first and last names and their availability
     private ArrayList<Staff> importStaff(Boolean staffType, LocalDate rosterStartDate) {
 
         String[] availabilityTags = {
@@ -536,7 +536,7 @@ public class RosteringImporter {
 
     }
 
-    /** returns whether a date is within a specific unavailability range */
+    *//** returns whether a date is within a specific unavailability range *//*
     private boolean isUnavailableDate(LocalDate start, LocalDate end, LocalDate day){
         if(day.isBefore(end) && day.isAfter(start)){
             return true;
@@ -596,7 +596,7 @@ public class RosteringImporter {
             }
 
 
-            /*Sheet workshopSheet = workbook.getSheetAt(workshopSheetIndex);
+            *//*Sheet workshopSheet = workbook.getSheetAt(workshopSheetIndex);
 
             DataFormatter formatter = new DataFormatter();
 
@@ -609,7 +609,7 @@ public class RosteringImporter {
             String endDateStr = formatter.formatCellValue(endDateCell);
             // then parse to a local date object
             startDate = parseDate(startDateStr);
-            endDate = parseDate(endDateStr);*/
+            endDate = parseDate(endDateStr);*//*
         }
         catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -852,10 +852,10 @@ public class RosteringImporter {
                 location = row.getCell(locationColumn).getStringCellValue();
 
 
-                /*DataFormatter formatter = new DataFormatter();
+                *//*DataFormatter formatter = new DataFormatter();
                 String dateString = formatter.formatCellValue(row.);
                 System.out.println(dateString);
-                date = parseDate(dateString);*/
+                date = parseDate(dateString);*//*
 
                 Date tmpdate = row.getCell(dateColumn).getDateCellValue();
 
@@ -959,11 +959,11 @@ public class RosteringImporter {
 
     }
 
-    /** Takes a date string in d/M/yy format and parses it to a LocalDate object,
+    *//** Takes a date string in d/M/yy format and parses it to a LocalDate object,
      *  with format yyyy-MM-dd.
      * @param startDateStr: date as a string
      * @return date as LocalDate object
-     */
+     *//*
     private LocalDate parseDate(String startDateStr) {
         // needed to parse from d/M/yy format to local date object
         DateTimeFormatter dTF = DateTimeFormatter.ofPattern("d/M/yy");
@@ -971,11 +971,11 @@ public class RosteringImporter {
 
     }
 
-    /** Takes a date string in M/d/yy format and parses it to a LocalDate object,
+    *//** Takes a date string in M/d/yy format and parses it to a LocalDate object,
      *  with format yyyy-MM-dd.
      * @param startDateStr: date as a string
      * @return date as LocalDate object
-     */
+     *//*
     private LocalDate parseDateReversed(String startDateStr) {
         // needed to parse from d/M/yy format to local date object
         DateTimeFormatter dTF = DateTimeFormatter.ofPattern("M/d/yy");
@@ -983,7 +983,7 @@ public class RosteringImporter {
 
     }
 
-    /** returns list of names of all courses that do not require a guest speaker */
+    *//** returns list of names of all courses that do not require a guest speaker *//*
     private ArrayList<String> noGuestCourses(){
 
         ArrayList<String> noGuestCourses = new ArrayList<>();
@@ -1233,6 +1233,6 @@ public class RosteringImporter {
             return true;
         }
         return false;
-    }
+    }*/
 
 }
