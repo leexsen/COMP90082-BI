@@ -125,7 +125,7 @@ public class BookingImporter {
                 day = (int) row.getCell(BookingColumnIndex.DATE.getValue()).getNumericCellValue();
             }
 
-            LocalDate date = LocalDate.of(2020, getMonth(bookingSheet), day);
+            LocalDate date = LocalDate.of(2019, getMonth(bookingSheet), day);
 
             // only add workshops if they are within specified roster dates
             if (date.isBefore(rosterStartDate) || date.isAfter(rosterEndDate) )
@@ -151,10 +151,15 @@ public class BookingImporter {
             String course = getCourse(row);
             String workshop = course;
             int locationIndex = getLocationIndex(row);
-            String location = BookingColumnIndex.of(locationIndex).getDisplayName();
             LocalTime startTime = getTime(formatter.formatCellValue(row.getCell(locationIndex)));
             LocalTime endTime = startTime.plusHours(1);
+            String location = null;
 
+            if (locationIndex == BookingColumnIndex.OTHER.getValue()) {
+                location = formatter.formatCellValue(row.getCell(BookingColumnIndex.LOCATION.getValue()));
+            } else {
+                location = BookingColumnIndex.of(locationIndex).getDisplayName();
+            }
 
             boolean facilitatorOnly = false;
 
