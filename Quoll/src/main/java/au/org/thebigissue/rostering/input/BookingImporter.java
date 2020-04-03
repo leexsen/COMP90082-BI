@@ -120,7 +120,7 @@ public class BookingImporter {
             if (row.getRowNum() <= 1)
                 continue;
 
-            // get day of the
+            // get day of the workshop
             if(day == -1 || !formatter.formatCellValue(row.getCell(BookingColumnIndex.DATE.getValue())).equals("")) {
                 day = (int) row.getCell(BookingColumnIndex.DATE.getValue()).getNumericCellValue();
             }
@@ -153,14 +153,7 @@ public class BookingImporter {
             int locationIndex = getLocationIndex(row);
             LocalTime startTime = getTime(formatter.formatCellValue(row.getCell(locationIndex)));
             LocalTime endTime = startTime.plusHours(1);
-            String location = null;
-
-            if (locationIndex == BookingColumnIndex.OTHER.getValue()) {
-                location = formatter.formatCellValue(row.getCell(BookingColumnIndex.LOCATION.getValue()));
-            } else {
-                location = BookingColumnIndex.of(locationIndex).getDisplayName();
-            }
-
+            String location = getLocation(row, locationIndex);
             boolean facilitatorOnly = false;
 
             // adding workshop normally (no manual override)
@@ -293,5 +286,16 @@ public class BookingImporter {
                 month = null;
         }
         return month;
+    }
+
+    private String getLocation(Row row, int locationIndex) {
+        String location = null;
+        if (locationIndex == BookingColumnIndex.OTHER.getValue()) {
+            location = formatter.formatCellValue(row.getCell(BookingColumnIndex.LOCATION.getValue()));
+        } else {
+            location = BookingColumnIndex.of(locationIndex).getDisplayName();
+        }
+
+        return location;
     }
 }
