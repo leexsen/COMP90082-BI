@@ -70,7 +70,7 @@ enum BookingColumnIndex {
      */
     public static BookingColumnIndex of(int i) {
         if (i < 0 || i >= ENUMS.length) {
-            throw new DateTimeException("Invalid value for ColumnIndex: " + i);
+            throw new IndexOutOfBoundsException("Invalid value for ColumnIndex: " + i);
         }
         return ENUMS[i];
     }
