@@ -4,12 +4,12 @@ import au.org.thebigissue.rostering.solver.variables.Availability;
 import au.org.thebigissue.rostering.solver.variables.Facilitator;
 import au.org.thebigissue.rostering.solver.variables.GuestSpeaker;
 import au.org.thebigissue.rostering.solver.variables.Staff;
+import org.apache.commons.math3.exception.OutOfRangeException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.time.DateTimeException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -67,7 +67,7 @@ enum ColumnIndex {
      */
     public static ColumnIndex of(int i) {
         if (i < 0 || i >= ENUMS.length) {
-            throw new DateTimeException("Invalid value for ColumnIndex: " + i);
+            throw new IndexOutOfBoundsException("Invalid value for ColumnIndex: " + i);
         }
         return ENUMS[i];
     }
@@ -119,19 +119,19 @@ public class AvailabilityImporter {
 
             Availability availability = readAvailability(row);
 
-            // skip this day if the staff is unavailable for the whole day
+            // skip this person if the person is unavailable for the whole week
             if (availability.unavailableAtAll())
                 continue;
 
             String[] trainedCourses = readTrainedCourses(row);
-            String lastName = row.getCell(ColumnIndex.NAME.getValue()).getStringCellValue();
+            String firstName = row.getCell(ColumnIndex.NAME.getValue()).getStringCellValue();
             String staffCode = row.getCell(ColumnIndex.STAFF_CODE.getValue()).getStringCellValue();
             int maxSessions = (int) row.getCell(ColumnIndex.MAX_SESSIONS.getValue()).getNumericCellValue();
 
             if (staffCode.equals(FACILITATOR_CODE))
-                facilitatorList.add(new Facilitator(null, lastName, availability, maxSessions, trainedCourses));
+                facilitatorList.add(new Facilitator(firstName, "", availability, maxSessions, trainedCourses));
             else if (staffCode.equals(GUESTSPEAKER_CODE))
-                guestspeakerList.add(new GuestSpeaker(null, lastName, availability, maxSessions, trainedCourses, 2));
+                guestspeakerList.add(new GuestSpeaker(firstName, "", availability, maxSessions, trainedCourses, 2));
         }
     }
 
@@ -139,8 +139,14 @@ public class AvailabilityImporter {
         Availability availability = new Availability();
 
         for (int i = ColumnIndex.MON_AM.getValue(); i <= ColumnIndex.FRI_AM.getValue(); i+=2) {
-            String available_am = row.getCell(i).getStringCellValue();
-            String available_pm = row.getCell(i + 1).getStringCellValue();
+            Cell cell_am = row.getCell(i);
+            Cell cell_pm = row.getCell(i + 1);
+
+            if (cell_am == null || cell_pm == null)
+                continue;
+
+            String available_am = cell_am.getStringCellValue();
+            String available_pm = cell_pm.getStringCellValue();
 
             LocalTime availableFrom;
             LocalTime availableUntil;
@@ -173,7 +179,12 @@ public class AvailabilityImporter {
         ArrayList<String> trainedCourses = new ArrayList<>();
 
         for (int i = ColumnIndex.P123.getValue(); i <= ColumnIndex.C.getValue(); i++) {
-            String isTrained = row.getCell(i).getStringCellValue();
+            Cell cell  = row.getCell(i);
+
+            if (cell == null)
+                continue;
+
+            String isTrained = cell.getStringCellValue();
 
             if (isTrained.equals(TRUE))
                 trainedCourses.add(ColumnIndex.of(i).getDisplayName());
