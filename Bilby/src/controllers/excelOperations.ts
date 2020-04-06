@@ -49,7 +49,7 @@ export function getCities(file: Buffer): City[] {
  */
 export function getGuestSpeakers(file: Buffer, from: Date, to: Date): User[] {
   const wb = XLSX.read(file, { type: "buffer" });
-  const u = wb.Sheets["Facilitators | GuestSpeakers"];
+  const u = wb.Sheets["Master availability"];
   const FAndGSO: any[] = XLSX.utils.sheet_to_json(u);
   const GSUsers: User[] = [];
 
@@ -192,7 +192,7 @@ export function getGuestSpeakers(file: Buffer, from: Date, to: Date): User[] {
       }
     }
 
-    if (FAndGSO[i]["Type"] === "Guest Speaker") {
+    if (FAndGSO[i]["Staff code"] === "GS") {
       GSUsers.push(new UserModel({
         firstName: FAndGSO[i]["First Name"],
         lastName: FAndGSO[i]["Last Name"],
@@ -256,11 +256,11 @@ export function getGuestSpeakers(file: Buffer, from: Date, to: Date): User[] {
  */
 export function getFacilitators(file: Buffer, from: Date, to: Date): User[] {
   const wb = XLSX.read(file, { type: "buffer" });
-  const u = wb.Sheets["Facilitators | GuestSpeakers"];
+  const u = wb.Sheets["Master Availability"];
   const FAndGSO: any[] = XLSX.utils.sheet_to_json(u);
   const facilitatorUsers: User[] = [];
   for (let i = 0; i < Object.keys(FAndGSO).length; i++) {
-    if (FAndGSO[i]["Type"] === "Facilitator") {
+    if (FAndGSO[i]["Staff code"] === "F") {
       const days = [];
       //Get Monday Availabilities
       if (FAndGSO[i]["Mon am"] === "Y" && FAndGSO[i]["Mon pm"] === "Y") {
