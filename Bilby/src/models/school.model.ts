@@ -9,6 +9,11 @@ export class School extends Typegoose {
   @prop({ required: true })
   public name!: string;
 
+
+  /* added by Nikhil*/
+  @prop({ required: false })
+  public retention!: boolean;
+
 }
 
 export const SchoolModel = new School().getModelForClass(School);
