@@ -9,70 +9,161 @@ import { Location, LocationModel } from "../models/location.model";
 import { City, CityModel } from "../models/city.model";
 
 export const EMPTY_FACILITATOR = new UserModel({
+  
   firstName: "No Solution",
+
+/* Commented by Nikhil
   lastName: "",
   email: "",
   address: "",
+*/
   userType: UserType.FACILITATOR,
+
+  /* Commented by Nikhil
+  maxWS add that right now maxamount is true of false ****************
   phoneNumber: "",
+  */
   _facilitator: new FacilitatorModel({
+   
+   /* Commented by Nikhil
     city: new CityModel({ city: "" }),
-    trained: [],
+    trained: [], commented by Nikhil
     reliable: false,
+   */
     availabilities: [],
     specificUnavailabilities: [],
-    assignedTimes: []
+    assignedTimes: [],
+    /* added by Nikhil*/
+    P123: [],
+    P456: [],
+    DHD: [],
+    HHI: [],
+    CSE: [],
+    Pe: [],
+    DHDe: [],
+    DADe: [],
+    HHIe: [],
+    CSEe: [],
+    TBIdea: [],
+    Ah: [],
+    C: []
+
   })
 });
 
 export const EMPTY_GUEST_SPEAKER = new UserModel({
   firstName: "No Solution",
+  /* Commented by Nikhil
   lastName: "",
   email: "",
   address: "",
+*/
   userType: UserType.GUEST_SPEAKER,
+
+  /* Commented by Nikhil
+  maxWS add that right now maxamount is true of false ****************
   phoneNumber: "",
+  */
   _guestSpeaker: new GuestSpeakerModel({
+
+    /* Commented by Nikhil
     city: new CityModel({ city: "" }),
-    trained: [],
+    trained: [], commented by Nikhil
     reliable: false,
+   */
     availabilities: [],
     specificUnavailabilities: [],
-    assignedTimes: []
+    assignedTimes: [],
+    /* added by Nikhil*/
+    P123: [],
+    P456: [],
+    DHD: [],
+    HHI: [],
+    CSE: [],
+    Pe: [],
+    DHDe: [],
+    DADe: [],
+    HHIe: [],
+    CSEe: [],
+    TBIdea: [],
+    Ah: [],
+    C: []
   })
 });
 
 export const NA_FACILITATOR = new UserModel({
   firstName: "N/A",
-  lastName: "N/A",
-  email: "N/A",
-  address: "N/A",
+/* Commented by Nikhil
+  lastName: "",
+  email: "",
+  address: "",*/
   userType: UserType.FACILITATOR,
-  phoneNumber: "N/A",
+  /* Commented by Nikhil
+  maxWS add that right now maxamount is true of false ****************
+  phoneNumber: "",
+  */
   _facilitator: new GuestSpeakerModel({
-    city: new CityModel({ city: "N/A" }),
-    trained: [],
+
+        /* Commented by Nikhil
+    city: new CityModel({ city: "" }),
+    trained: [], commented by Nikhil
     reliable: false,
+   */
     availabilities: [],
     specificUnavailabilities: [],
-    assignedTimes: []
+    assignedTimes: [],
+    /* added by Nikhil*/
+    P123: [],
+    P456: [],
+    DHD: [],
+    HHI: [],
+    CSE: [],
+    Pe: [],
+    DHDe: [],
+    DADe: [],
+    HHIe: [],
+    CSEe: [],
+    TBIdea: [],
+    Ah: [],
+    C: []
   })
 });
 
 export const NA_GUESTSPEAKER = new UserModel({
   firstName: "N/A",
-  lastName: "N/A",
-  email: "N/A",
-  address: "N/A",
+  /* Commented by Nikhil
+  lastName: "",
+  email: "",
+  address: "",*/
   userType: UserType.GUEST_SPEAKER,
-  phoneNumber: "N/A",
+  /* Commented by Nikhil
+  maxWS add that right now maxamount is true of false ****************
+  phoneNumber: "",
+  */
   _guestSpeaker: new GuestSpeakerModel({
-    city: new CityModel({ city: "N/A" }),
-    trained: [],
+
+   /* Commented by Nikhil
+    city: new CityModel({ city: "" }),
+    trained: [], commented by Nikhil
     reliable: false,
+   */
     availabilities: [],
     specificUnavailabilities: [],
-    assignedTimes: []
+    assignedTimes: [],
+    /* added by Nikhil*/
+    P123: [],
+    P456: [],
+    DHD: [],
+    HHI: [],
+    CSE: [],
+    Pe: [],
+    DHDe: [],
+    DADe: [],
+    HHIe: [],
+    CSEe: [],
+    TBIdea: [],
+    Ah: [],
+    C: []
   })
 });
 
@@ -98,21 +189,25 @@ export function checkSameTime(time1: Date, time2: Date): boolean {
  * @param {User} user - user to be assessed
  * @param {string} workshopName - name of workshop
  * @returns {boolean} - whether the user is trained for this particular workshop
+ * 
+ * changes function name trained user from boolean to string
+ * 
+ * 
  */
-export function trainedUser(user: User, workshopName: string): boolean {
+export function trainedUserP123(user: User, workshopName: string): boolean {
   if (user._facilitator instanceof FacilitatorModel) {
     const facilitator = user._facilitator as Facilitator;
-    const trainedWorkshops = facilitator.trained;
-    for (let i = 0; i < trainedWorkshops.length; i++) {
-      if (trainedWorkshops[i] === workshopName) {
+    const trainedWorkshopsP123 = facilitator.P123;
+    for (let i = 0; i < trainedWorkshopsP123.length; i++) {
+      if (trainedWorkshopsP123[i] === workshopName) {
         return true;
       }
     }
   } else if (user._guestSpeaker instanceof GuestSpeakerModel) {
     const guestSpeaker = user._guestSpeaker as GuestSpeaker;
-    const trainedWorkshops = guestSpeaker.trained;
-    for (let j = 0; j < trainedWorkshops.length; j++) {
-      if (trainedWorkshops[j] === workshopName) {
+    const trainedWorkshopsP123 = guestSpeaker.P123;
+    for (let j = 0; j < trainedWorkshopsP123.length; j++) {
+      if (trainedWorkshopsP123[j] === workshopName) {
         return true;
       }
     }
@@ -120,6 +215,417 @@ export function trainedUser(user: User, workshopName: string): boolean {
 
   return false;
 }
+
+
+/**
+ * Check if day matches with availability.
+ *
+ * @export
+ * @param {User} user - user to be assessed
+ * @param {string} workshopName - name of workshop
+ * @returns {boolean} - whether the user is trained for this particular workshop
+ * 
+ * changes function name trained user from boolean to string
+ * 
+ * 
+ */
+export function trainedUserP456(user: User, workshopName: string): boolean {
+  if (user._facilitator instanceof FacilitatorModel) {
+    const facilitator = user._facilitator as Facilitator;
+    const trainedWorkshopsP456 = facilitator.P456;
+    for (let i = 0; i < trainedWorkshopsP456.length; i++) {
+      if (trainedWorkshopsP456[i] === workshopName) {
+        return true;
+      }
+    }
+  } else if (user._guestSpeaker instanceof GuestSpeakerModel) {
+    const guestSpeaker = user._guestSpeaker as GuestSpeaker;
+    const trainedWorkshopsP456 = guestSpeaker.P456;
+    for (let j = 0; j < trainedWorkshopsP456.length; j++) {
+      if (trainedWorkshopsP456[j] === workshopName) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+/**
+ * Check if day matches with availability.
+ *
+ * @export
+ * @param {User} user - user to be assessed
+ * @param {string} workshopName - name of workshop
+ * @returns {boolean} - whether the user is trained for this particular workshop
+ * 
+ * changes function name trained user from boolean to string
+ * 
+ * 
+ */
+export function trainedUserDHD(user: User, workshopName: string): boolean {
+  if (user._facilitator instanceof FacilitatorModel) {
+    const facilitator = user._facilitator as Facilitator;
+    const trainedWorkshopsDHD = facilitator.DHD;
+    for (let i = 0; i < trainedWorkshopsDHD.length; i++) {
+      if (trainedWorkshopsDHD[i] === workshopName) {
+        return true;
+      }
+    }
+  } else if (user._guestSpeaker instanceof GuestSpeakerModel) {
+    const guestSpeaker = user._guestSpeaker as GuestSpeaker;
+    const trainedWorkshopsDHD = guestSpeaker.DHD;
+    for (let j = 0; j < trainedWorkshopsDHD.length; j++) {
+      if (trainedWorkshopsDHD[j] === workshopName) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+/**
+ * Check if day matches with availability.
+ *
+ * @export
+ * @param {User} user - user to be assessed
+ * @param {string} workshopName - name of workshop
+ * @returns {boolean} - whether the user is trained for this particular workshop
+ * 
+ * changes function name trained user from boolean to string
+ * 
+ * 
+ */
+export function trainedUserHHI(user: User, workshopName: string): boolean {
+  if (user._facilitator instanceof FacilitatorModel) {
+    const facilitator = user._facilitator as Facilitator;
+    const trainedWorkshopsHHI = facilitator.HHI;
+    for (let i = 0; i < trainedWorkshopsHHI.length; i++) {
+      if (trainedWorkshopsHHI[i] === workshopName) {
+        return true;
+      }
+    }
+  } else if (user._guestSpeaker instanceof GuestSpeakerModel) {
+    const guestSpeaker = user._guestSpeaker as GuestSpeaker;
+    const trainedWorkshopsHHI = guestSpeaker.HHI;
+    for (let j = 0; j < trainedWorkshopsHHI.length; j++) {
+      if (trainedWorkshopsHHI[j] === workshopName) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+/**
+ * Check if day matches with availability.
+ *
+ * @export
+ * @param {User} user - user to be assessed
+ * @param {string} workshopName - name of workshop
+ * @returns {boolean} - whether the user is trained for this particular workshop
+ * 
+ * changes function name trained user from boolean to string
+ * 
+ * 
+ */
+export function trainedUserCSE(user: User, workshopName: string): boolean {
+  if (user._facilitator instanceof FacilitatorModel) {
+    const facilitator = user._facilitator as Facilitator;
+    const trainedWorkshopsCSE = facilitator.CSE;
+    for (let i = 0; i < trainedWorkshopsCSE.length; i++) {
+      if (trainedWorkshopsCSE[i] === workshopName) {
+        return true;
+      }
+    }
+  } else if (user._guestSpeaker instanceof GuestSpeakerModel) {
+    const guestSpeaker = user._guestSpeaker as GuestSpeaker;
+    const trainedWorkshopsCSE = guestSpeaker.CSE;
+    for (let j = 0; j < trainedWorkshopsCSE.length; j++) {
+      if (trainedWorkshopsCSE[j] === workshopName) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+/**
+ * Check if day matches with availability.
+ *
+ * @export
+ * @param {User} user - user to be assessed
+ * @param {string} workshopName - name of workshop
+ * @returns {boolean} - whether the user is trained for this particular workshop
+ * 
+ * changes function name trained user from boolean to string
+ * 
+ * 
+ */
+export function trainedUserPe(user: User, workshopName: string): boolean {
+  if (user._facilitator instanceof FacilitatorModel) {
+    const facilitator = user._facilitator as Facilitator;
+    const trainedWorkshopsPe = facilitator.Pe;
+    for (let i = 0; i < trainedWorkshopsPe.length; i++) {
+      if (trainedWorkshopsPe[i] === workshopName) {
+        return true;
+      }
+    }
+  } else if (user._guestSpeaker instanceof GuestSpeakerModel) {
+    const guestSpeaker = user._guestSpeaker as GuestSpeaker;
+    const trainedWorkshopsPe = guestSpeaker.Pe;
+    for (let j = 0; j < trainedWorkshopsPe.length; j++) {
+      if (trainedWorkshopsPe[j] === workshopName) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+/**
+ * Check if day matches with availability.
+ *
+ * @export
+ * @param {User} user - user to be assessed
+ * @param {string} workshopName - name of workshop
+ * @returns {boolean} - whether the user is trained for this particular workshop
+ * 
+ * changes function name trained user from boolean to string
+ * 
+ * 
+ */
+export function trainedUserDHDe(user: User, workshopName: string): boolean {
+  if (user._facilitator instanceof FacilitatorModel) {
+    const facilitator = user._facilitator as Facilitator;
+    const trainedWorkshopsDHDe = facilitator.DHDe;
+    for (let i = 0; i < trainedWorkshopsDHDe.length; i++) {
+      if (trainedWorkshopsDHDe[i] === workshopName) {
+        return true;
+      }
+    }
+  } else if (user._guestSpeaker instanceof GuestSpeakerModel) {
+    const guestSpeaker = user._guestSpeaker as GuestSpeaker;
+    const trainedWorkshopsDHDe = guestSpeaker.DHDe;
+    for (let j = 0; j < trainedWorkshopsDHDe.length; j++) {
+      if (trainedWorkshopsDHDe[j] === workshopName) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+/**
+ * Check if day matches with availability.
+ *
+ * @export
+ * @param {User} user - user to be assessed
+ * @param {string} workshopName - name of workshop
+ * @returns {boolean} - whether the user is trained for this particular workshop
+ * 
+ * changes function name trained user from boolean to string
+ * 
+ * 
+ */
+export function trainedUserDADe(user: User, workshopName: string): boolean {
+  if (user._facilitator instanceof FacilitatorModel) {
+    const facilitator = user._facilitator as Facilitator;
+    const trainedWorkshopsDADe = facilitator.DADe;
+    for (let i = 0; i < trainedWorkshopsDADe.length; i++) {
+      if (trainedWorkshopsDADe[i] === workshopName) {
+        return true;
+      }
+    }
+  } else if (user._guestSpeaker instanceof GuestSpeakerModel) {
+    const guestSpeaker = user._guestSpeaker as GuestSpeaker;
+    const trainedWorkshopsDADe = guestSpeaker.DADe;
+    for (let j = 0; j < trainedWorkshopsDADe.length; j++) {
+      if (trainedWorkshopsDADe[j] === workshopName) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+/**
+ * Check if day matches with availability.
+ *
+ * @export
+ * @param {User} user - user to be assessed
+ * @param {string} workshopName - name of workshop
+ * @returns {boolean} - whether the user is trained for this particular workshop
+ * 
+ * changes function name trained user from boolean to string
+ * 
+ * 
+ */
+export function trainedUserHHIe(user: User, workshopName: string): boolean {
+  if (user._facilitator instanceof FacilitatorModel) {
+    const facilitator = user._facilitator as Facilitator;
+    const trainedWorkshopsHHIe = facilitator.P123;
+    for (let i = 0; i < trainedWorkshopsHHIe.length; i++) {
+      if (trainedWorkshopsHHIe[i] === workshopName) {
+        return true;
+      }
+    }
+  } else if (user._guestSpeaker instanceof GuestSpeakerModel) {
+    const guestSpeaker = user._guestSpeaker as GuestSpeaker;
+    const trainedWorkshopsHHIe = guestSpeaker.HHIe;
+    for (let j = 0; j < trainedWorkshopsHHIe.length; j++) {
+      if (trainedWorkshopsHHIe[j] === workshopName) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+/**
+ * Check if day matches with availability.
+ *
+ * @export
+ * @param {User} user - user to be assessed
+ * @param {string} workshopName - name of workshop
+ * @returns {boolean} - whether the user is trained for this particular workshop
+ * 
+ * changes function name trained user from boolean to string
+ * 
+ * 
+ */
+export function trainedUserCSEe(user: User, workshopName: string): boolean {
+  if (user._facilitator instanceof FacilitatorModel) {
+    const facilitator = user._facilitator as Facilitator;
+    const trainedWorkshopsCSEe = facilitator.CSEe;
+    for (let i = 0; i < trainedWorkshopsCSEe.length; i++) {
+      if (trainedWorkshopsCSEe[i] === workshopName) {
+        return true;
+      }
+    }
+  } else if (user._guestSpeaker instanceof GuestSpeakerModel) {
+    const guestSpeaker = user._guestSpeaker as GuestSpeaker;
+    const trainedWorkshopsCSEe = guestSpeaker.CSEe;
+    for (let j = 0; j < trainedWorkshopsCSEe.length; j++) {
+      if (trainedWorkshopsCSEe[j] === workshopName) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+/**
+ * Check if day matches with availability.
+ *
+ * @export
+ * @param {User} user - user to be assessed
+ * @param {string} workshopName - name of workshop
+ * @returns {boolean} - whether the user is trained for this particular workshop
+ * 
+ * changes function name trained user from boolean to string
+ * 
+ * 
+ */
+export function trainedUserTBIdea(user: User, workshopName: string): boolean {
+  if (user._facilitator instanceof FacilitatorModel) {
+    const facilitator = user._facilitator as Facilitator;
+    const trainedWorkshopsTBIdea = facilitator.TBIdea;
+    for (let i = 0; i < trainedWorkshopsTBIdea.length; i++) {
+      if (trainedWorkshopsTBIdea[i] === workshopName) {
+        return true;
+      }
+    }
+  } else if (user._guestSpeaker instanceof GuestSpeakerModel) {
+    const guestSpeaker = user._guestSpeaker as GuestSpeaker;
+    const trainedWorkshopsTBIdea = guestSpeaker.TBIdea;
+    for (let j = 0; j < trainedWorkshopsTBIdea.length; j++) {
+      if (trainedWorkshopsTBIdea[j] === workshopName) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+/**
+ * Check if day matches with availability.
+ *
+ * @export
+ * @param {User} user - user to be assessed
+ * @param {string} workshopName - name of workshop
+ * @returns {boolean} - whether the user is trained for this particular workshop
+ * 
+ * changes function name trained user from boolean to string
+ * 
+ * 
+ */
+export function trainedUserAh(user: User, workshopName: string): boolean {
+  if (user._facilitator instanceof FacilitatorModel) {
+    const facilitator = user._facilitator as Facilitator;
+    const trainedWorkshopsAh = facilitator.Ah;
+    for (let i = 0; i < trainedWorkshopsAh.length; i++) {
+      if (trainedWorkshopsAh[i] === workshopName) {
+        return true;
+      }
+    }
+  } else if (user._guestSpeaker instanceof GuestSpeakerModel) {
+    const guestSpeaker = user._guestSpeaker as GuestSpeaker;
+    const trainedWorkshopsAh = guestSpeaker.Ah;
+    for (let j = 0; j < trainedWorkshopsAh.length; j++) {
+      if (trainedWorkshopsAh[j] === workshopName) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+/**
+ * Check if day matches with availability.
+ *
+ * @export
+ * @param {User} user - user to be assessed
+ * @param {string} workshopName - name of workshop
+ * @returns {boolean} - whether the user is trained for this particular workshop
+ * 
+ * changes function name trained user from boolean to string
+ * 
+ * 
+ */
+  
+export function trainedUserC(user: User, workshopName: string): boolean {
+  if (user._facilitator instanceof FacilitatorModel) {
+    const facilitator = user._facilitator as Facilitator;
+    const trainedWorkshopsC = facilitator.C;
+    for (let i = 0; i < trainedWorkshopsC.length; i++) {
+      if (trainedWorkshopsC[i] === workshopName) {
+        return true;
+      }
+    }
+  } else if (user._guestSpeaker instanceof GuestSpeakerModel) {
+    const guestSpeaker = user._guestSpeaker as GuestSpeaker;
+    const trainedWorkshopsC = guestSpeaker.C;
+    for (let j = 0; j < trainedWorkshopsC.length; j++) {
+      if (trainedWorkshopsC[j] === workshopName) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
 
 /**
  * Check if user (facilitator or guest speaker) are eligible for a particular
@@ -132,8 +638,27 @@ export function trainedUser(user: User, workshopName: string): boolean {
  */
 export function eligible(user: User, workshop: Ref<Workshop>): boolean {
   if (workshop instanceof WorkshopModel) {
-    const workshop1 = workshop as Workshop;
-    if (trainedUser(user, workshop1.workshopName)) {
+    const workshopP123 = workshop as Workshop;
+    const workshopP456 = workshop as Workshop;
+    const workshopDHD= workshop as Workshop;
+    const workshopHHI = workshop as Workshop;
+    const workshopCSE = workshop as Workshop;
+    const workshopPe = workshop as Workshop;
+    const workshopDHDe = workshop as Workshop;
+    const workshopDADe = workshop as Workshop;
+    const workshopHHIe = workshop as Workshop;
+    const workshopCSEe = workshop as Workshop;
+    const workshopTBIdea = workshop as Workshop;
+    const workshopAh = workshop as Workshop;
+    const workshopC = workshop as Workshop;
+
+    if (trainedUserP123(user, workshopP123.workshopName)&& trainedUserP456(user, workshopP456.workshopName)
+    && trainedUserDHD(user, workshopDHD.workshopName) && trainedUserHHI(user, workshopHHI.workshopName)
+    && trainedUserCSE(user, workshopCSE.workshopName) && trainedUserPe(user, workshopPe.workshopName)
+    && trainedUserP123(user, workshopDHDe.workshopName) && trainedUserDADe(user, workshopDADe.workshopName)
+    && trainedUserHHIe(user, workshopHHIe.workshopName) && trainedUserCSEe(user, workshopCSEe.workshopName)
+    && trainedUserTBIdea(user, workshopTBIdea.workshopName) && trainedUserAh(user, workshopAh.workshopName)
+    && trainedUserC(user, workshopC.workshopName)) {
       return true;
     }
   }
@@ -361,37 +886,37 @@ export function pairTeams(possibleFacilitator: User, possibleGuestSpeaker: User,
   let team: [User, User];
 
   if (possibleFacilitator._facilitator instanceof FacilitatorModel && possibleGuestSpeaker._guestSpeaker instanceof GuestSpeakerModel && workshop instanceof WorkshopModel) {
-    const workshop1 = workshop as Workshop;
-    const workshopName = workshop1.workshopName;
+    const P123 = workshop as Workshop;
+    const workshopName = P123.workshopName;
 
-    if (workshop1.requireFacilitator && workshop1.requireGuestSpeaker) {
+    if (P123.requireFacilitator && P123.requireGuestSpeaker) {
       if (possibleFacilitator !== EMPTY_FACILITATOR && possibleGuestSpeaker !== EMPTY_GUEST_SPEAKER) {
-        if (trainedUser(possibleFacilitator, workshopName) && trainedUser(possibleGuestSpeaker, workshopName)) {
+        if (trainedUserP123(possibleFacilitator, workshopName) && trainedUserP123(possibleGuestSpeaker, workshopName)) {
           team = [possibleFacilitator, possibleGuestSpeaker];
           return team;
-        } else if (trainedUser(possibleFacilitator, workshopName) && !trainedUser(possibleGuestSpeaker, workshopName)) {
+        } else if (trainedUserP123(possibleFacilitator, workshopName) && !trainedUserP123(possibleGuestSpeaker, workshopName)) {
           team = [possibleFacilitator, EMPTY_GUEST_SPEAKER];
           return team;
-        } else if (!trainedUser(possibleFacilitator, workshopName) && trainedUser(possibleGuestSpeaker, workshopName)) {
+        } else if (!trainedUserP123(possibleFacilitator, workshopName) && trainedUserP123(possibleGuestSpeaker, workshopName)) {
           team = [EMPTY_FACILITATOR, possibleGuestSpeaker];
           return team;
-        } else if (!trainedUser(possibleFacilitator, workshopName) && !trainedUser(possibleGuestSpeaker, workshopName)) {
+        } else if (!trainedUserP123(possibleFacilitator, workshopName) && !trainedUserP123(possibleGuestSpeaker, workshopName)) {
           team = [EMPTY_FACILITATOR, EMPTY_GUEST_SPEAKER];
           return team;
         }
       } else if (possibleFacilitator !== EMPTY_FACILITATOR) {
-        if (trainedUser(possibleFacilitator, workshopName)) {
+        if (trainedUserP123(possibleFacilitator, workshopName)) {
           team = [possibleFacilitator, possibleGuestSpeaker];
           return team;
-        } else if (!trainedUser(possibleFacilitator, workshopName)) {
+        } else if (!trainedUserP123(possibleFacilitator, workshopName)) {
           team = [EMPTY_FACILITATOR, possibleGuestSpeaker];
           return team;
         }
       } else if (possibleGuestSpeaker !== EMPTY_GUEST_SPEAKER) {
-        if (trainedUser(possibleGuestSpeaker, workshopName)) {
+        if (trainedUserP123(possibleGuestSpeaker, workshopName)) {
           team = [possibleFacilitator, possibleGuestSpeaker];
           return team;
-        } else if (!trainedUser(possibleGuestSpeaker, workshopName)) {
+        } else if (!trainedUserP123(possibleGuestSpeaker, workshopName)) {
           team = [possibleFacilitator, EMPTY_GUEST_SPEAKER];
           return team;
         }
@@ -399,16 +924,16 @@ export function pairTeams(possibleFacilitator: User, possibleGuestSpeaker: User,
         team = [possibleFacilitator, possibleGuestSpeaker];
         return team;
       }
-    } else if (workshop1.requireFacilitator && !workshop1.requireGuestSpeaker) {
-      if (!(possibleFacilitator === EMPTY_FACILITATOR) && trainedUser(possibleFacilitator, workshopName)) {
+    } else if (P123.requireFacilitator && !P123.requireGuestSpeaker) {
+      if (!(possibleFacilitator === EMPTY_FACILITATOR) && trainedUserP123(possibleFacilitator, workshopName)) {
         team = [possibleFacilitator, NA_GUESTSPEAKER];
         return team;
       } else {
         team = [EMPTY_FACILITATOR, NA_GUESTSPEAKER];
         return team;
       }
-    } else if (!workshop1.requireFacilitator && workshop1.requireGuestSpeaker) {
-      if (possibleGuestSpeaker !== EMPTY_GUEST_SPEAKER && trainedUser(possibleGuestSpeaker, workshopName)) {
+    } else if (!P123.requireFacilitator && P123.requireGuestSpeaker) {
+      if (possibleGuestSpeaker !== EMPTY_GUEST_SPEAKER && trainedUserP123(possibleGuestSpeaker, workshopName)) {
         team = [NA_FACILITATOR, possibleGuestSpeaker];
         return team;
       } else {
