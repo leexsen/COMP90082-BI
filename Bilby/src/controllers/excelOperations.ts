@@ -100,18 +100,28 @@ export function getGuestSpeakers(file: Buffer, from: Date, to: Date): User[] {
     if (FAndGSO[i]["Type"] === "Guest Speaker") {
       GSUsers.push(new UserModel({
         firstName: FAndGSO[i]["First Name"],
+        /* Commented by Nikhil
         lastName: FAndGSO[i]["Last Name"],
         address: FAndGSO[i]["Address"],
         email: FAndGSO[i]["Email"],
+        */
         userType: UserType.GUEST_SPEAKER,
+          /* Commented by Nikhil
+        maxWS add that right now maxamount is true of false ****************
         phoneNumber: FAndGSO[i]["Phone Number"],
+        */
         _guestSpeaker: new GuestSpeakerModel({
+           /*Commented by Nikhil
           trained: ((FAndGSO[i]["Trained"]) ? FAndGSO[i]["Trained"].split(",") : ""),
           reliable: ((FAndGSO[i]["Reliable"] === "Yes") ? true : false),
           city: new CityModel({
             city: FAndGSO[i]["City"]
           }),
+
+          */
+          
           availabilities: availabilities,
+          /*Commented by Nikhil
           specificUnavailabilities: [
             {
               notAvailableFrom: convertDate(FAndGSO[i]["Specific Unavailability 1 From"]),
@@ -143,7 +153,23 @@ export function getGuestSpeakers(file: Buffer, from: Date, to: Date): User[] {
               notAvailableUntil: convertDate(FAndGSO[i]["Specific Unavailability 6 To"]),
               notes: FAndGSO[i]["Notes 6"],
             }],
-          assignedTimes: []
+            */
+          assignedTimes: [],
+
+          /* added by nikhil*/
+          P123: ((FAndGSO[i]["P123"]) ? FAndGSO[i]["P123"].split(",") : ""),
+          P456: ((FAndGSO[i]["P456"]) ? FAndGSO[i]["P456"].split(",") : ""),
+          DHD: ((FAndGSO[i]["DHD"]) ? FAndGSO[i]["DHD"].split(",") : ""),
+          HHI: ((FAndGSO[i]["HHI"]) ? FAndGSO[i]["HHI"].split(",") : ""),
+          CSE: ((FAndGSO[i]["CSE"]) ? FAndGSO[i]["CSE"].split(",") : ""),
+          Pe: ((FAndGSO[i]["Pe"]) ? FAndGSO[i]["Pe"].split(",") : ""),
+          DHDe: ((FAndGSO[i]["DHDe"]) ? FAndGSO[i]["DHDe"].split(",") : ""),
+          DADe: ((FAndGSO[i]["DADe"]) ? FAndGSO[i]["DADe"].split(",") : ""),
+          HHIe: ((FAndGSO[i]["HHIe"]) ? FAndGSO[i]["HHIe"].split(",") : ""),
+          CSEe: ((FAndGSO[i]["CSEe"]) ? FAndGSO[i]["CSEe"].split(",") : ""),
+          TBIdea: ((FAndGSO[i]["TBIdea"]) ? FAndGSO[i]["TBIdea"].split(",") : ""),
+          Ah: ((FAndGSO[i]["Ah"]) ? FAndGSO[i]["Ah"].split(",") : ""),
+          C: ((FAndGSO[i]["Y"]) ? FAndGSO[i]["N"].split(",") : "")
         })
       }));
     }
@@ -166,34 +192,126 @@ export function getFacilitators(file: Buffer, from: Date, to: Date): User[] {
   const facilitatorUsers: User[] = [];
   for (let i = 0; i < Object.keys(FAndGSO).length; i++) {
     if (FAndGSO[i]["Type"] === "Facilitator") {
-      const days = [{
-        availableFrom: convertDate(FAndGSO[i]["Sunday Available From"]),
-        availableUntil: convertDate(FAndGSO[i]["Sunday Available Until"])
-      },
+      const days = []
       {
-        availableFrom: convertDate(FAndGSO[i]["Monday Available From"]),
-        availableUntil: convertDate(FAndGSO[i]["Monday Available Until"])
-      },
-      {
-        availableFrom: convertDate(FAndGSO[i]["Tuesday Available From"]),
-        availableUntil: convertDate(FAndGSO[i]["Tuesday Available Until"])
-      },
-      {
-        availableFrom: convertDate(FAndGSO[i]["Wednesday Available From"]),
-        availableUntil: convertDate(FAndGSO[i]["Wednesday Available Until"])
-      },
-      {
-        availableFrom: convertDate(FAndGSO[i]["Thursday Available From"]),
-        availableUntil: convertDate(FAndGSO[i]["Thursday Available Until"])
-      },
-      {
-        availableFrom: convertDate(FAndGSO[i]["Friday Available From"]),
-        availableUntil: convertDate(FAndGSO[i]["Friday Available Until"])
-      },
-      {
-        availableFrom: convertDate(FAndGSO[i]["Saturday Available From"]),
-        availableUntil: convertDate(FAndGSO[i]["Saturday Available Until"])
-      }];
+       //Get Monday Availabilities
+      if (FAndGSO[i]["Mon am"] === "Y" && FAndGSO[i]["Mon pm"] === "Y") {
+        days.push({
+          availableFrom: convertDate(8),
+          availableUntil: convertDate(18)
+        });
+      } else if (FAndGSO[i]["Mon am"] === "Y" && FAndGSO[i]["Mon pm"] === "N") {
+        days.push({
+          availableFrom: convertDate(8),
+          availableUntil: convertDate(12)
+        });
+      } else if (FAndGSO[i]["Mon am"] === "N" && FAndGSO[i]["Mon pm"] === "Y") {
+        days.push({
+          availableFrom: convertDate(12),
+          availableUntil: convertDate(18)
+        });
+      } else {
+        days.push({
+          availableFrom: convertDate(NaN),
+          availableUntil: convertDate(NaN)
+        });
+      }
+
+      //Get Tuesday Availabilities
+
+      if (FAndGSO[i]["Tue am"] === "Y" && FAndGSO[i]["Tue pm"] === "Y") {
+        days.push({
+          availableFrom: convertDate(8),
+          availableUntil: convertDate(18)
+        });
+      } else if (FAndGSO[i]["Tue am"] === "Y" && FAndGSO[i]["Tue pm"] === "N") {
+        days.push({
+          availableFrom: convertDate(8),
+          availableUntil: convertDate(12)
+        });
+      } else if (FAndGSO[i]["Tue am"] === "N" && FAndGSO[i]["Tue pm"] === "Y") {
+        days.push({
+          availableFrom: convertDate(12),
+          availableUntil: convertDate(18)
+        });
+      } else {
+        days.push({
+          availableFrom: convertDate(NaN),
+          availableUntil: convertDate(NaN)
+        });
+      }
+
+      //Get Wednesday Availabilities
+
+      if (FAndGSO[i]["Wed am"] === "Y" && FAndGSO[i]["Wed pm"] === "Y") {
+        days.push({
+          availableFrom: convertDate(8),
+          availableUntil: convertDate(18)
+        });
+      } else if (FAndGSO[i]["Wed am"] === "Y" && FAndGSO[i]["Wed pm"] === "N") {
+        days.push({
+          availableFrom: convertDate(8),
+          availableUntil: convertDate(12)
+        });
+      } else if (FAndGSO[i]["Wed am"] === "N" && FAndGSO[i]["Wed pm"] === "Y") {
+        days.push({
+          availableFrom: convertDate(12),
+          availableUntil: convertDate(18)
+        });
+      } else {
+        days.push({
+          availableFrom: convertDate(NaN),
+          availableUntil: convertDate(NaN)
+        });
+      }
+
+      //Get Thursday Availabilities
+
+      if (FAndGSO[i]["Thu am"] === "Y" && FAndGSO[i]["Thu pm"] === "Y") {
+        days.push({
+          availableFrom: convertDate(8),
+          availableUntil: convertDate(18)
+        });
+      } else if (FAndGSO[i]["Thu am"] === "Y" && FAndGSO[i]["Thu pm"] === "N") {
+        days.push({
+          availableFrom: convertDate(8),
+          availableUntil: convertDate(12)
+        });
+      } else if (FAndGSO[i]["Thu am"] === "N" && FAndGSO[i]["Thu pm"] === "Y") {
+        days.push({
+          availableFrom: convertDate(12),
+          availableUntil: convertDate(18)
+        });
+      } else {
+        days.push({
+          availableFrom: convertDate(NaN),
+          availableUntil: convertDate(NaN)
+        });
+      }
+
+      //Get Friday Availabilities
+
+      if (FAndGSO[i]["Fri am"] === "Y" && FAndGSO[i]["Fri pm"] === "Y") {
+        days.push({
+          availableFrom: convertDate(8),
+          availableUntil: convertDate(18)
+        });
+      } else if (FAndGSO[i]["Fri am"] === "Y" && FAndGSO[i]["Fri pm"] === "N") {
+        days.push({
+          availableFrom: convertDate(8),
+          availableUntil: convertDate(12)
+        });
+      } else if (FAndGSO[i]["Fri am"] === "N" && FAndGSO[i]["Fri pm"] === "Y") {
+        days.push({
+          availableFrom: convertDate(12),
+          availableUntil: convertDate(18)
+        });
+      } else {
+        days.push({
+          availableFrom: convertDate(NaN),
+          availableUntil: convertDate(NaN)
+        });
+      }
 
       const availabilities: Availability[] = [];
 
@@ -212,18 +330,28 @@ export function getFacilitators(file: Buffer, from: Date, to: Date): User[] {
 
       facilitatorUsers.push(new UserModel({
         firstName: FAndGSO[i]["First Name"],
+
+        /* Commented by Nikhil
         lastName: FAndGSO[i]["Last Name"],
         address: FAndGSO[i]["Address"],
         email: FAndGSO[i]["Email"],
+        */
         userType: UserType.FACILITATOR,
+        /* Commented by Nikhil
+        maxWS add that right now maxamount is true of false ****************
         phoneNumber: FAndGSO[i]["Phone Number"],
+        */
         _facilitator: new FacilitatorModel({
+          /*Commented by Nikhil
           trained: ((FAndGSO[i]["Trained"]) ? FAndGSO[i]["Trained"].split(",") : ""),
           reliable: ((FAndGSO[i]["Reliable"] === "Yes") ? true : false),
           city: new CityModel({
             city: FAndGSO[i]["City"]
           }),
+
+          */
           availabilities: availabilities,
+          /*Commented by Nikhil
           specificUnavailabilities: [
             {
               notAvailableFrom: convertDate(FAndGSO[i]["Specific Unavailability 1 From"]),
@@ -254,19 +382,37 @@ export function getFacilitators(file: Buffer, from: Date, to: Date): User[] {
               notAvailableFrom: convertDate(FAndGSO[i]["Specific Unavailability 6 From"]),
               notAvailableUntil: convertDate(FAndGSO[i]["Specific Unavailability 6 To"]),
               notes: FAndGSO[i]["Notes 6"],
-            }],
-          assignedTimes: []
+            }], 
+            */
+          assignedTimes: [],
+          /* added by nikhil*/
+          
+          P123: ((FAndGSO[i]["P123"]) ? FAndGSO[i]["P123"].split(",") : ""),
+          P456: ((FAndGSO[i]["P456"]) ? FAndGSO[i]["P456"].split(",") : ""),
+          DHD: ((FAndGSO[i]["DHD"]) ? FAndGSO[i]["DHD"].split(",") : ""),
+          HHI: ((FAndGSO[i]["HHI"]) ? FAndGSO[i]["HHI"].split(",") : ""),
+          CSE: ((FAndGSO[i]["CSE"]) ? FAndGSO[i]["CSE"].split(",") : ""),
+          Pe: ((FAndGSO[i]["Pe"]) ? FAndGSO[i]["Pe"].split(",") : ""),
+          DHDe: ((FAndGSO[i]["DHDe"]) ? FAndGSO[i]["DHDe"].split(",") : ""),
+          DADe: ((FAndGSO[i]["DADe"]) ? FAndGSO[i]["DADe"].split(",") : ""),
+          HHIe: ((FAndGSO[i]["HHIe"]) ? FAndGSO[i]["HHIe"].split(",") : ""),
+          CSEe: ((FAndGSO[i]["CSEe"]) ? FAndGSO[i]["CSEe"].split(",") : ""),
+          TBIdea: ((FAndGSO[i]["TBIdea"]) ? FAndGSO[i]["TBIdea"].split(",") : ""),
+          Ah: ((FAndGSO[i]["Ah"]) ? FAndGSO[i]["Ah"].split(",") : ""),
+          C: ((FAndGSO[i]["Y"]) ? FAndGSO[i]["N"].split(",") : "")
         })
       }));
     }
   }
   return facilitatorUsers;
 }
-/**
+
+/** commented by Nikhil
  * Function for Getting all the School details
  * @param {Buffer} file - The excel sheet
  * @returns {User} Users array
- */
+*/
+ 
 export function getSchools(file: Buffer): User[] {
   const wb = XLSX.read(file, { type: "buffer" });
   const c = wb.Sheets["Contact Information"];
@@ -292,6 +438,7 @@ export function getSchools(file: Buffer): User[] {
   return schools;
 }
 
+
 /**
   * Function to get Workshop types
   * @param {Buffer} file - The excel sheet
@@ -313,14 +460,15 @@ export function getWorkshopTypes(file: Buffer): Workshop[] {
   return workshops;
 }
 
-/**
+/** 
  * Function for Getting all the Booking details
  * @param {Buffer} file - The excel sheet
  * @param {string} cityName - Sheet name
  * @param {Date} fromDate - From Date
  * @param {Date} toDate - Till Date
  * @returns {Booking} booking
- */
+*/ 
+
 export function getBookings(file: Buffer, cityName: string, fromDate: Date, toDate: Date): Booking[] {
   const wb = XLSX.read(file, { type: "buffer" });
   if (wb.Sheets[cityName]) {
@@ -387,34 +535,62 @@ export function getBookings(file: Buffer, cityName: string, fromDate: Date, toDa
 export function printBooking(b: Booking[]): Buffer {
   const sheetName = "Roster";
   const wb = XLSX.utils.book_new();
-  const wsData = [
-    ["Booking Date", "Location", "Pax", "Workshop", "Level", "Teacher", "Phone", "Facilitator", "Facilitator Mobile", "Facilitator Email", "GuestSpeaker", "Guest Speaker Mobile", "Guest Speaker Email", "TimeBegin", "TimeEnd"],
-  ];
 
+  /*added by Nikhil */
+  const wsData = [
+    ["Day","Date", "Collins Street","DWH","Others","Workshop","Facil","GuestSpeaker","Location","Pax","Level",
+    "Contact name","Contact email","Contact number","Billable amount","Comment"],
+  ];
+    
+    /*"P123","P456", "DHD","HHI","CSE","Pe","DHDe","DADe","HHIe","CSEe","TBIdea","Ah","C",*/
+     /*"School","Ret?",*/
   for (let i = 0; i < Object.keys(b).length; i++) {
     b[i].sessionTime.timeBegin.setHours(b[i].sessionTime.timeBegin.getHours());
     b[i].sessionTime.timeEnd.setHours(b[i].sessionTime.timeEnd.getHours());
     const timeBegin = b[i].sessionTime.timeBegin.toLocaleTimeString();
     const timeEnd = b[i].sessionTime.timeEnd.toLocaleTimeString();
     const row: string[] = [];
-    row.push(b[i].sessionTime.timeBegin.toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "short", day: "2-digit" }));
+    /*added by Nikhil */
+    row.push(b[i].sessionTime.timeBegin.toLocaleDateString(undefined, { weekday: "long"}));
+    row.push(b[i].sessionTime.timeBegin.toLocaleDateString(undefined, { day: "2-digit" }));
+    
+    /*added by Nikhil check logic*/
     if (b[i].location instanceof LocationModel) {
       const location = b[i].location as Location;
-      row.push(location.name);
-      if (location.capacity) {
-        row.push(location.capacity.toString());
-      } else {
-        row.push("");
-      }
+      row.push(timeBegin);
     } else {
-      row.push("", "");
+      row.push("","","");
     }
 
     if (b[i].workshop instanceof WorkshopModel) {
       const Workshoptype = b[i].workshop as Workshop;
       row.push(Workshoptype.workshopName);
     } else {
-      row.push("", "");
+      row.push("");
+    }
+
+    if (b[i].facilitator instanceof UserModel) {
+      const facilitator = b[i].facilitator as User;
+      row.push(facilitator.firstName);
+    } else {
+      row.push("");
+    }
+
+    if (b[i].guestSpeaker instanceof UserModel) {
+      const guestSpeaker = b[i].guestSpeaker as User;
+      row.push(guestSpeaker.firstName);
+    } else {
+      row.push("");
+    }
+
+
+    if (b[i].location instanceof LocationModel) {
+      const location = b[i].location as Location;
+      row.push(location.address);  
+    if (location.capacity) {
+      row.push(location.capacity.toString());
+    } else {
+      row.push(" "," ");
     }
 
     if (b[i].level) {
@@ -422,29 +598,23 @@ export function printBooking(b: Booking[]): Buffer {
     } else {
       row.push("");
     }
-
-    if (b[i].teacher instanceof UserModel) {
-      const teacher = b[i].teacher as User;
-      row.push(teacher.firstName, teacher.phoneNumber);
+/* look into this 
+    if (b[i].teacher instanceof SchoolModel) {
+      const school = b[i].teacher as User;
+      row.push(SchoolModel.name,SchoolModel.extension);
     } else {
       row.push("", "");
     }
+    */  
 
-    if (b[i].facilitator instanceof UserModel) {
-      const facilitator = b[i].facilitator as User;
-      row.push(facilitator.firstName, facilitator.phoneNumber, facilitator.email);
+    if (b[i].teacher instanceof UserModel) {
+      const teacher = b[i].teacher as User;
+      row.push(teacher.firstName,teacher.email, teacher.phoneNumber,teacher.billable,teacher.comment);
     } else {
-      row.push("", "", "");
+      row.push("", "","","","");
     }
 
-    if (b[i].guestSpeaker instanceof UserModel) {
-      const guestSpeaker = b[i].guestSpeaker as User;
-      row.push(guestSpeaker.firstName, guestSpeaker.phoneNumber, guestSpeaker.email);
-    } else {
-      row.push("", "", "");
-    }
-
-    row.push(timeBegin, timeEnd);
+/*row.push(timeBegin, timeEnd);*/
     wsData.push(row);
   }
   const ws = XLSX.utils.aoa_to_sheet(wsData);
@@ -464,6 +634,7 @@ export function printBooking(b: Booking[]): Buffer {
     { width: 30 },
     { width: 20 },
     { width: 20 },
+    { width: 30 },
   ];
   ws["!cols"] = wscols;
   wb.SheetNames.push(sheetName);
