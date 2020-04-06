@@ -53,7 +53,7 @@ public abstract class Shift extends AbstractPersistable {
     // shadow variable, updated by OptaPlanner when allocating workshops
     private List<Workshop> workshopList;
 
-    private  int maxSessions;
+    private int maxSessions;
 
     // required by OptaPlanner
     public Shift() {}

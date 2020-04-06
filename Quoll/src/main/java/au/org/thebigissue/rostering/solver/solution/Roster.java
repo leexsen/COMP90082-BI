@@ -110,11 +110,11 @@ public class Roster extends AbstractPersistable {
         for (LocalDate date = firstDate; date.isBefore(lastDate) || date.equals(lastDate); date = date.plusDays(1)) {
             //TODO can check if staff member is unavailable for the whole date - then no need to add the shift
             for (Staff staff : facilitators) {
-                facilitatorShiftList.add(new FacilitatorShift(id, staff, date));
+                facilitatorShiftList.add(new FacilitatorShift(id, staff, date, this));
                 id += 1;
             }
             for (Staff staff : guestSpeakers) {
-                guestSpeakerShiftList.add(new GuestSpeakerShift(id, staff, date));
+                guestSpeakerShiftList.add(new GuestSpeakerShift(id, staff, date, this));
                 id += 1;
             }
         }

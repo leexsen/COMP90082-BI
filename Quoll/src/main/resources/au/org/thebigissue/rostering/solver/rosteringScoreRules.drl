@@ -137,18 +137,35 @@ rule "Back-to-back workshops - offsite locations (guest speakers)"
         scoreHolder.addHardConstraintMatch(kcontext, -1);
 end
 
-// A facilitator can attend a maximum of $maxSession workshops per day
-rule "Facilitator: max $maxSession(defineded in the Execl file) workshops per day"
+// A facilitator can attend a maximum of 3 workshops per day
+rule "Facilitator: max 3 workshops per day"
     when
-        FacilitatorShift($num : getNumWorkshops() > $maxSessions : maxSessions)
+        FacilitatorShift($num : getNumWorkshops() > 3)
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -(2 ^ ($num - 3)) * 100);
+end
+
+// A guest speaker can only attend a maximum of 3 workshops per day
+rule "Guest speaker: max 3 workshops per day"
+    when
+        GuestSpeakerShift($num : getNumWorkshops() > 3)
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -(2 ^ ($num - 3)) * 200);
+end
+
+// A facilitator can attend a maximum of $maxSession workshops per week
+rule "Facilitator: max $maxSession(defineded in the Execl file) workshops per week"
+    when
+        //FacilitatorShift($num : getNumWorkshops() > $maxSessions : maxSessions)
+        FacilitatorShift($num : getNumWorkshopsPerWeek() > $maxSessions : maxSessions)
     then
         scoreHolder.addHardConstraintMatch(kcontext, -(2 ^ ($num - $maxSessions)) * 100);
 end
 
-// A guest speaker can only attend a maximum of $maxSession workshops per day
-rule "Guest speaker: max $maxSession(defineded in the Execl file) workshops per day"
+// A guest speaker can only attend a maximum of $maxSession workshops per week
+rule "Guest speaker: max $maxSession(defineded in the Execl file) workshops per week"
     when
-        GuestSpeakerShift($num : getNumWorkshops() > $maxSessions : maxSessions)
+        GuestSpeakerShift($num : getNumWorkshopsPerWeek() > $maxSessions : maxSessions)
     then
         scoreHolder.addHardConstraintMatch(kcontext, -(2 ^ ($num - $maxSessions)) * 200);
 end
@@ -193,7 +210,7 @@ rule "Maximise utilisation - guest speaker"
         scoreHolder.addSoftConstraintMatch(kcontext, $utilisation);
 end
 
-
+/*
 // Prefer rostering less reliable guest speakers on workshops occurring after more reliable guest speakers
 rule "Guest speaker ordering by reliability"
     when
@@ -209,6 +226,7 @@ rule "Guest speaker ordering by reliability"
         // when they are preceded by a higher reliability guest speaker.
         scoreHolder.addSoftConstraintMatch(kcontext, (($reliability1 + $reliability2) * 4 + Math.min(0,($reliability1 - $reliability2) * 3)));
 end
+*/
 
 rule "Max 3 workshops in a row without break"
     when
