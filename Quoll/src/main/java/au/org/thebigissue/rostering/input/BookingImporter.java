@@ -7,6 +7,7 @@ import au.org.thebigissue.rostering.solver.solution.Roster;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import javax.swing.plaf.metal.OceanTheme;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.*;
@@ -80,7 +81,7 @@ enum BookingColumnIndex {
 public class BookingImporter {
     private final String JAN_SHEET_NAME = "MJan";
     private final String FEB_SHEET_NAME = "MFeb";
-    private final String MAR_SHEET_NAME = "MMeb";
+    private final String MAR_SHEET_NAME = "MMar";
     private final String APR_SHEET_NAME = "MApr";
     private final String MAY_SHEET_NAME = "MMay";
     private final String JUN_SHEET_NAME = "MJun";
@@ -90,17 +91,22 @@ public class BookingImporter {
     private final String OCT_SHEET_NAME = "MOct";
     private final String NOV_SHEET_NAME = "MNov";
     private final String DEC_SHEET_NAME = "MDec";
+    private final String[] bookingNames = {JAN_SHEET_NAME, FEB_SHEET_NAME, MAR_SHEET_NAME, APR_SHEET_NAME, MAY_SHEET_NAME,
+                                            JUN_SHEET_NAME, JUL_SHEET_NAME, AUG_SHEET_NAME, SEP_SHEET_NAME, OCT_SHEET_NAME,
+                                            NOV_SHEET_NAME, DEC_SHEET_NAME};
 
 
-    private Sheet bookingSheet = null;
+    private List<Sheet> bookingSheets = new ArrayList<>();
     private DataFormatter formatter = new DataFormatter();
 
     public BookingImporter(String excelFileName) throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook(new FileInputStream(excelFileName));
         for (Sheet sheet : workbook) {
-            if (sheet.getSheetName().equals(FEB_SHEET_NAME)) {
-                bookingSheet = sheet;
-                break;
+            for (String sheetName : bookingNames) {
+                if (sheet.getSheetName().equals(sheetName)) {
+                    bookingSheets.add(sheet);
+                    break;
+                }
             }
         }
         workbook.close();
@@ -112,94 +118,102 @@ public class BookingImporter {
                                                List<Workshop> overriddenWorkshops) {
         List<Workshop> workshopList = new ArrayList<>();
         long id = 0;
-        int day = -1;
 
-        for (Row row : bookingSheet) {
+        for (Sheet sheet: bookingSheets) {
 
-            // skip the first two rows -- heading
-            if (row.getRowNum() <= 1)
-                continue;
+            int day = -1;
 
-            // get day of the workshop
-            if(day == -1 || !formatter.formatCellValue(row.getCell(BookingColumnIndex.DATE.getValue())).equals("")) {
-                day = (int) row.getCell(BookingColumnIndex.DATE.getValue()).getNumericCellValue();
-            }
+            for (Row row : sheet) {
 
-            LocalDate date = LocalDate.of(2019, getMonth(bookingSheet), day);
+                // skip the first two rows -- heading
+                if (row.getRowNum() <= 1)
+                    continue;
 
-            // only add workshops if they are within specified roster dates
-            if (date.isBefore(rosterStartDate) || date.isAfter(rosterEndDate) )
-                continue;
+                // go to next sheet if row is empty
+                if (isEmptyRow(row))
+                    break;
 
-            // skip over rows that has no workshop
-            if (getLocationIndex(row) == -1)
-                continue;
-
-            //import data of the workshop
-            String school = formatter.formatCellValue(row.getCell(BookingColumnIndex.SCHOOL.getValue()));
-            String offsite = formatter.formatCellValue(row.getCell(BookingColumnIndex.LOCATION.getValue()));
-            String level = formatter.formatCellValue(row.getCell(BookingColumnIndex.LEVEL.getValue()));
-            String pax = formatter.formatCellValue(row.getCell(BookingColumnIndex.PAX.getValue()));
-            String contactName = formatter.formatCellValue(row.getCell(BookingColumnIndex.CONTACTNAME.getValue()));
-            String email = formatter.formatCellValue(row.getCell(BookingColumnIndex.CONTACTEMAIL.getValue()));
-            String phone = formatter.formatCellValue(row.getCell(BookingColumnIndex.CONTACTNUMBER.getValue()));
-            int rowIndex = row.getRowNum();
-            int facilitatorColumn = BookingColumnIndex.FACIL.getValue();
-            String facilitator = formatter.formatCellValue(row.getCell(facilitatorColumn));
-            int guestSpeakerColumn = BookingColumnIndex.GUESTSPEAKER.getValue();
-            String guestSpeaker = formatter.formatCellValue(row.getCell(guestSpeakerColumn));
-            String course = getCourse(row);
-            String workshop = course;
-            int locationIndex = getLocationIndex(row);
-            LocalTime startTime = getTime(formatter.formatCellValue(row.getCell(locationIndex)));
-            LocalTime endTime = startTime.plusHours(1);
-            String location = getLocation(row, locationIndex);
-            boolean facilitatorOnly = false;
-
-            // adding workshop normally (no manual override)
-            if (facilitator.equals("") && guestSpeaker.equals("")) {
-                workshopList.add(new Workshop(id, school, course, location, offsite, level, pax, contactName,
-                        email, phone, workshop, rowIndex, facilitatorColumn, rowIndex, guestSpeakerColumn,
-                        date, startTime, endTime, facilitatorOnly, roster));
-            }
-            // overriding facilitator and guest speaker for this workshop
-            else {
-                //need to assign the correct shifts to the workshop
-                FacilitatorShift overrideFS = null;
-                GuestSpeakerShift overrideGSS = null;
-
-                // find the correct shift for the facilitator
-                for (FacilitatorShift fs : facilitatorShifts) {
-                    // Hack on staff name (to capture those without a last name on file)
-                    if (fs.getDate().equals(date) &&
-                            (fs.getStaffName().equals(facilitator) || fs.getStaffName().equals(facilitator + " "))) {
-                        overrideFS = fs;
-                        break;
-                    }
-                }
-                // find the correct shift for the guest speaker
-                for (GuestSpeakerShift gss : guestSpeakerShifts) {
-                    if (gss.getDate().equals(date) &&
-                            (gss.getStaffName().equals(guestSpeaker) ||
-                                    gss.getStaffName().equals(guestSpeaker + " "))) {
-                        overrideGSS = gss;
-                        break;
-                    }
+                // get day of the workshop
+                if (day == -1 || !formatter.formatCellValue(row.getCell(BookingColumnIndex.DATE.getValue())).equals("")) {
+                    day = (int) row.getCell(BookingColumnIndex.DATE.getValue()).getNumericCellValue();
                 }
 
-                //workshop with the shifts already assigned
-                Workshop overriddenWorkshop = new Workshop(id, school, course, location, offsite, level, pax,
-                        contactName, email, phone, workshop,
-                        rowIndex, facilitatorColumn, rowIndex, guestSpeakerColumn,
-                        overrideFS, overrideGSS, date, startTime, endTime);
-                // add to workshop list
-                workshopList.add(overriddenWorkshop);
-                // add to overridden workshop list
-                overriddenWorkshops.add(overriddenWorkshop);
+                LocalDate date = LocalDate.of(2019, getMonth(sheet), day);
+
+                // only add workshops if they are within specified roster dates
+                if (date.isBefore(rosterStartDate) || date.isAfter(rosterEndDate))
+                    continue;
+
+                // skip over rows that has no workshop
+                if (getLocationIndex(row) == -1)
+                    continue;
+
+                //import data of the workshop
+                String school = formatter.formatCellValue(row.getCell(BookingColumnIndex.SCHOOL.getValue()));
+                String offsite = formatter.formatCellValue(row.getCell(BookingColumnIndex.LOCATION.getValue()));
+                String level = formatter.formatCellValue(row.getCell(BookingColumnIndex.LEVEL.getValue()));
+                String pax = formatter.formatCellValue(row.getCell(BookingColumnIndex.PAX.getValue()));
+                String contactName = formatter.formatCellValue(row.getCell(BookingColumnIndex.CONTACTNAME.getValue()));
+                String email = formatter.formatCellValue(row.getCell(BookingColumnIndex.CONTACTEMAIL.getValue()));
+                String phone = formatter.formatCellValue(row.getCell(BookingColumnIndex.CONTACTNUMBER.getValue()));
+                int rowIndex = row.getRowNum();
+                int facilitatorColumn = BookingColumnIndex.FACIL.getValue();
+                String facilitator = formatter.formatCellValue(row.getCell(facilitatorColumn));
+                int guestSpeakerColumn = BookingColumnIndex.GUESTSPEAKER.getValue();
+                String guestSpeaker = formatter.formatCellValue(row.getCell(guestSpeakerColumn));
+                String course = getCourse(row);
+                String workshop = course;
+                int locationIndex = getLocationIndex(row);
+                LocalTime startTime = getTime(formatter.formatCellValue(row.getCell(locationIndex)));
+                LocalTime endTime = startTime.plusHours(1);
+                String location = getLocation(row, locationIndex);
+                boolean facilitatorOnly = false;
+
+                // adding workshop normally (no manual override)
+                if (facilitator.equals("") && guestSpeaker.equals("")) {
+                    workshopList.add(new Workshop(id, school, course, location, offsite, level, pax, contactName,
+                            email, phone, workshop, rowIndex, facilitatorColumn, rowIndex, guestSpeakerColumn,
+                            date, startTime, endTime, facilitatorOnly, roster));
+                }
+                // overriding facilitator and guest speaker for this workshop
+                else {
+                    //need to assign the correct shifts to the workshop
+                    FacilitatorShift overrideFS = null;
+                    GuestSpeakerShift overrideGSS = null;
+
+                    // find the correct shift for the facilitator
+                    for (FacilitatorShift fs : facilitatorShifts) {
+                        // Hack on staff name (to capture those without a last name on file)
+                        if (fs.getDate().equals(date) &&
+                                (fs.getStaffName().equals(facilitator) || fs.getStaffName().equals(facilitator + " "))) {
+                            overrideFS = fs;
+                            break;
+                        }
+                    }
+                    // find the correct shift for the guest speaker
+                    for (GuestSpeakerShift gss : guestSpeakerShifts) {
+                        if (gss.getDate().equals(date) &&
+                                (gss.getStaffName().equals(guestSpeaker) ||
+                                        gss.getStaffName().equals(guestSpeaker + " "))) {
+                            overrideGSS = gss;
+                            break;
+                        }
+                    }
+
+                    //workshop with the shifts already assigned
+                    Workshop overriddenWorkshop = new Workshop(id, school, course, location, offsite, level, pax,
+                            contactName, email, phone, workshop,
+                            rowIndex, facilitatorColumn, rowIndex, guestSpeakerColumn,
+                            overrideFS, overrideGSS, date, startTime, endTime);
+                    // add to workshop list
+                    workshopList.add(overriddenWorkshop);
+                    // add to overridden workshop list
+                    overriddenWorkshops.add(overriddenWorkshop);
+                }
+
+                id++;
+
             }
-
-            id++;
-
         }
 
         List<List<Workshop>> workshops = new ArrayList<List<Workshop>>();
@@ -297,5 +311,15 @@ public class BookingImporter {
         }
 
         return location;
+    }
+
+    private boolean isEmptyRow(Row row) {
+        for (int i = row.getFirstCellNum(); i < row.getLastCellNum(); i++) {
+            Cell cell = row.getCell(i);
+
+            if (cell != null && cell.getCellTypeEnum() != CellType.BLANK)
+                return false;
+        }
+        return true;
     }
 }
