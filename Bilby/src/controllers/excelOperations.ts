@@ -48,39 +48,43 @@ export function getCities(file: Buffer): City[] {
  */
 export function getGuestSpeakers(file: Buffer, from: Date, to: Date): User[] {
   const wb = XLSX.read(file, { type: "buffer" });
-  const u = wb.Sheets["Facilitators | GuestSpeakers"];
+  const u = wb.Sheets["Master availability"];
   const FAndGSO: any[] = XLSX.utils.sheet_to_json(u);
   const GSUsers: User[] = [];
+  const morning = 0.333333333; //8am
+  const midday = 0.5; //12pm
+  const evening = 0.708333333; //5pm
+  const workshops = ["P123", "P456", "DHD", "HHI", "CSE", "Pe", "DHDe",
+    "DADe", "HHIe", "CSEe", "TBIdea", "Ah", "C"];
+  const a = ["Sun am", "Mon am", "Mon pm", "Tues am", "Tues pm", "Wed am",
+    "Wed pm", "Thu am", "Thu pm", "Fri am", "Fri pm", "Sat am", "Sat pm"];
 
   for (let i = 0; i < Object.keys(FAndGSO).length; i++) {
-    const days = [{
-      availableFrom: convertDate(FAndGSO[i]["Sunday Available From"]),
-      availableUntil: convertDate(FAndGSO[i]["Sunday Available Until"])
-    },
-    {
-      availableFrom: convertDate(FAndGSO[i]["Monday Available From"]),
-      availableUntil: convertDate(FAndGSO[i]["Monday Available Until"])
-    },
-    {
-      availableFrom: convertDate(FAndGSO[i]["Tuesday Available From"]),
-      availableUntil: convertDate(FAndGSO[i]["Tuesday Available Until"])
-    },
-    {
-      availableFrom: convertDate(FAndGSO[i]["Wednesday Available From"]),
-      availableUntil: convertDate(FAndGSO[i]["Wednesday Available Until"])
-    },
-    {
-      availableFrom: convertDate(FAndGSO[i]["Thursday Available From"]),
-      availableUntil: convertDate(FAndGSO[i]["Thursday Available Until"])
-    },
-    {
-      availableFrom: convertDate(FAndGSO[i]["Friday Available From"]),
-      availableUntil: convertDate(FAndGSO[i]["Friday Available Until"])
-    },
-    {
-      availableFrom: convertDate(FAndGSO[i]["Saturday Available From"]),
-      availableUntil: convertDate(FAndGSO[i]["Saturday Available Until"])
-    }];
+    const days = [];
+
+    for (let j = 0; j < a.length; j += 2) {
+      if (FAndGSO[i][a[j]] === "Y" && FAndGSO[i][a[j + 1]] === "Y") {
+        days.push({
+          availableFrom: convertDate(morning),
+          availableUntil: convertDate(evening)
+        });
+      } else if (FAndGSO[i][a[j]] === "Y" && FAndGSO[i][a[j + 1]] === "N") {
+        days.push({
+          availableFrom: convertDate(morning),
+          availableUntil: convertDate(midday)
+        });
+      } else if (FAndGSO[i][a[j]] === "Y" && FAndGSO[i][a[j + 1]] === "N") {
+        days.push({
+          availableFrom: convertDate(midday),
+          availableUntil: convertDate(evening)
+        });
+      } else {
+        days.push({
+          availableFrom: convertDate(NaN),
+          availableUntil: convertDate(NaN)
+        });
+      }
+    }
 
     const availabilities: Availability[] = [];
 
@@ -97,22 +101,31 @@ export function getGuestSpeakers(file: Buffer, from: Date, to: Date): User[] {
       }
     }
 
-    if (FAndGSO[i]["Type"] === "Guest Speaker") {
+    const trained = [];
+    for (let k = 0; k < workshops.length; k++) {
+      if (FAndGSO[i][workshops[k]] === "Y") {
+        trained.push(workshops[k]);
+      } else {
+        continue;
+      }
+    }
+
+    if (FAndGSO[i]["Staff code"] === "GS") {
       GSUsers.push(new UserModel({
         firstName: FAndGSO[i]["First Name"],
-        lastName: FAndGSO[i]["Last Name"],
-        address: FAndGSO[i]["Address"],
-        email: FAndGSO[i]["Email"],
+        //lastName: FAndGSO[i]["Last Name"],
+        //address: FAndGSO[i]["Address"],
+        //email: FAndGSO[i]["Email"],
         userType: UserType.GUEST_SPEAKER,
-        phoneNumber: FAndGSO[i]["Phone Number"],
+        //phoneNumber: FAndGSO[i]["Phone Number"],
         _guestSpeaker: new GuestSpeakerModel({
-          trained: ((FAndGSO[i]["Trained"]) ? FAndGSO[i]["Trained"].split(",") : ""),
-          reliable: ((FAndGSO[i]["Reliable"] === "Yes") ? true : false),
-          city: new CityModel({
-            city: FAndGSO[i]["City"]
-          }),
+          trained: trained,
+          //reliable: ((FAndGSO[i]["Reliable"] === "Yes") ? true : false),
+          //city: new CityModel({
+          //  city: FAndGSO[i]["City"]
+          //}),
           availabilities: availabilities,
-          specificUnavailabilities: [
+          /*specificUnavailabilities: [
             {
               notAvailableFrom: convertDate(FAndGSO[i]["Specific Unavailability 1 From"]),
               notAvailableUntil: convertDate(FAndGSO[i]["Specific Unavailability 1 To"]),
@@ -142,8 +155,9 @@ export function getGuestSpeakers(file: Buffer, from: Date, to: Date): User[] {
               notAvailableFrom: convertDate(FAndGSO[i]["Specific Unavailability 6 From"]),
               notAvailableUntil: convertDate(FAndGSO[i]["Specific Unavailability 6 To"]),
               notes: FAndGSO[i]["Notes 6"],
-            }],
-          assignedTimes: []
+            }], */
+          assignedTimes: [],
+          maxWS: FAndGSO[i]["Max w/s"]
         })
       }));
     }
@@ -161,230 +175,119 @@ export function getGuestSpeakers(file: Buffer, from: Date, to: Date): User[] {
  */
 export function getFacilitators(file: Buffer, from: Date, to: Date): User[] {
   const wb = XLSX.read(file, { type: "buffer" });
-  const u = wb.Sheets["Facilitators | GuestSpeakers"];
+  const u = wb.Sheets["Master availability"];
   const FAndGSO: any[] = XLSX.utils.sheet_to_json(u);
   const facilitatorUsers: User[] = [];
   const morning = 0.333333333; //8am
   const midday = 0.5; //12pm
   const evening = 0.708333333; //5pm
+  const workshops = ["P123", "P456", "DHD", "HHI", "CSE", "Pe", "DHDe",
+    "DADe", "HHIe", "CSEe", "TBIdea", "Ah", "C"];
+  const a = ["Sun am", "Mon am", "Mon pm", "Tues am", "Tues pm", "Wed am",
+    "Wed pm", "Thu am", "Thu pm", "Fri am", "Fri pm", "Sat am", "Sat pm"];
   for (let i = 0; i < Object.keys(FAndGSO).length; i++) {
-    if (FAndGSO[i]["Type"] === "Facilitator") {
+    if (FAndGSO[i]["Staff code"] === "F") {
+      for (let i = 0; i < Object.keys(FAndGSO).length; i++) {
+        const days = [];
 
-      const days = [];
-      //Get Monday Availabilities
-      if (FAndGSO[i]["Mon am"] === "Y" && FAndGSO[i]["Mon pm"] === "Y") {
-        days.push({
-          availableFrom: convertDate(morning),
-          availableUntil: convertDate(evening)
-        });
-      } else if (FAndGSO[i]["Mon am"] === "Y" && FAndGSO[i]["Mon pm"] === "N") {
-        days.push({
-          availableFrom: convertDate(morning),
-          availableUntil: convertDate(midday)
-        });
-      } else if (FAndGSO[i]["Mon am"] === "N" && FAndGSO[i]["Mon pm"] === "Y") {
-        days.push({
-          availableFrom: convertDate(midday),
-          availableUntil: convertDate(evening)
-        });
-      } else {
-        days.push({
-          availableFrom: convertDate(NaN),
-          availableUntil: convertDate(NaN)
-        });
-      }
-
-      //Get Tuesday Availabilities
-
-      if (FAndGSO[i]["Tue am"] === "Y" && FAndGSO[i]["Tue pm"] === "Y") {
-        days.push({
-          availableFrom: convertDate(morning),
-          availableUntil: convertDate(evening)
-        });
-      } else if (FAndGSO[i]["Tue am"] === "Y" && FAndGSO[i]["Tue pm"] === "N") {
-        days.push({
-          availableFrom: convertDate(morning),
-          availableUntil: convertDate(midday
-        });
-      } else if (FAndGSO[i]["Tue am"] === "N" && FAndGSO[i]["Tue pm"] === "Y") {
-        days.push({
-          availableFrom: convertDate(midday),
-          availableUntil: convertDate(evening)
-        });
-      } else {
-        days.push({
-          availableFrom: convertDate(NaN),
-          availableUntil: convertDate(NaN)
-        });
-      }
-
-      //Get Wednesday Availabilities
-
-      if (FAndGSO[i]["Wed am"] === "Y" && FAndGSO[i]["Wed pm"] === "Y") {
-        days.push({
-          availableFrom: convertDate(morning),
-          availableUntil: convertDate(evening)
-        });
-      } else if (FAndGSO[i]["Wed am"] === "Y" && FAndGSO[i]["Wed pm"] === "N") {
-        days.push({
-          availableFrom: convertDate(morning),
-          availableUntil: convertDate(midday)
-        });
-      } else if (FAndGSO[i]["Wed am"] === "N" && FAndGSO[i]["Wed pm"] === "Y") {
-        days.push({
-          availableFrom: convertDate(midday),
-          availableUntil: convertDate(evening)
-        });
-      } else {
-        days.push({
-          availableFrom: convertDate(NaN),
-          availableUntil: convertDate(NaN)
-        });
-      }
-
-      //Get Thursday Availabilities
-
-      if (FAndGSO[i]["Thu am"] === "Y" && FAndGSO[i]["Thu pm"] === "Y") {
-        days.push({
-          availableFrom: convertDate(morning),
-          availableUntil: convertDate(evening)
-        });
-      } else if (FAndGSO[i]["Thu am"] === "Y" && FAndGSO[i]["Thu pm"] === "N") {
-        days.push({
-          availableFrom: convertDate(morning),
-          availableUntil: convertDate(midday)
-        });
-      } else if (FAndGSO[i]["Thu am"] === "N" && FAndGSO[i]["Thu pm"] === "Y") {
-        days.push({
-          availableFrom: convertDate(midday),
-          availableUntil: convertDate(evening)
-        });
-      } else {
-        days.push({
-          availableFrom: convertDate(NaN),
-          availableUntil: convertDate(NaN)
-        });
-      }
-
-      //Get Friday Availabilities
-
-      if (FAndGSO[i]["Fri am"] === "Y" && FAndGSO[i]["Fri pm"] === "Y") {
-        days.push({
-          availableFrom: convertDate(morning),
-          availableUntil: convertDate(evening)
-        });
-      } else if (FAndGSO[i]["Fri am"] === "Y" && FAndGSO[i]["Fri pm"] === "N") {
-        days.push({
-          availableFrom: convertDate(morning),
-          availableUntil: convertDate(midday)
-        });
-      } else if (FAndGSO[i]["Fri am"] === "N" && FAndGSO[i]["Fri pm"] === "Y") {
-        days.push({
-          availableFrom: convertDate(midday),
-          availableUntil: convertDate(evening)
-        });
-      } else {
-        days.push({
-          availableFrom: convertDate(NaN),
-          availableUntil: convertDate(NaN)
-        });
-      }
-      /*const days = [{
-        availableFrom: convertDate(FAndGSO[i]["Sunday Available From"]),
-        availableUntil: convertDate(FAndGSO[i]["Sunday Available Until"])
-      },
-      {
-        availableFrom: convertDate(FAndGSO[i]["Monday Available From"]),
-        availableUntil: convertDate(FAndGSO[i]["Monday Available Until"])
-      },
-      {
-        availableFrom: convertDate(FAndGSO[i]["Tuesday Available From"]),
-        availableUntil: convertDate(FAndGSO[i]["Tuesday Available Until"])
-      },
-      {
-        availableFrom: convertDate(FAndGSO[i]["Wednesday Available From"]),
-        availableUntil: convertDate(FAndGSO[i]["Wednesday Available Until"])
-      },
-      {
-        availableFrom: convertDate(FAndGSO[i]["Thursday Available From"]),
-        availableUntil: convertDate(FAndGSO[i]["Thursday Available Until"])
-      },
-      {
-        availableFrom: convertDate(FAndGSO[i]["Friday Available From"]),
-        availableUntil: convertDate(FAndGSO[i]["Friday Available Until"])
-      },
-      {
-        availableFrom: convertDate(FAndGSO[i]["Saturday Available From"]),
-        availableUntil: convertDate(FAndGSO[i]["Saturday Available Until"])
-      }];
-
-      */
-
-
-
-      const availabilities: Availability[] = [];
-
-      for (let d = new Date(from); d <= to; d.setDate(d.getDate() + 1)) {
-        const times = days[d.getDay()];
-        const availableFrom = new Date(times.availableFrom);
-        const availableUntil = new Date(times.availableUntil);
-
-        if (!isNaN(availableFrom.getTime()) && !isNaN(availableUntil.getTime())) {
-          availabilities.push({
-            availableFrom: new Date(new Date(d).setHours(availableFrom.getHours(), availableFrom.getMinutes(), availableFrom.getSeconds())),
-            availableUntil: new Date(new Date(d).setHours(availableUntil.getHours(), availableUntil.getMinutes(), availableUntil.getSeconds()))
-          });
+        for (let j = 0; j < a.length; j += 2) {
+          if (FAndGSO[i][a[j]] === "Y" && FAndGSO[i][a[j + 1]] === "Y") {
+            days.push({
+              availableFrom: convertDate(morning),
+              availableUntil: convertDate(evening)
+            });
+          } else if (FAndGSO[i][a[j]] === "Y" && FAndGSO[i][a[j + 1]] === "N") {
+            days.push({
+              availableFrom: convertDate(morning),
+              availableUntil: convertDate(midday)
+            });
+          } else if (FAndGSO[i][a[j]] === "Y" && FAndGSO[i][a[j + 1]] === "N") {
+            days.push({
+              availableFrom: convertDate(midday),
+              availableUntil: convertDate(evening)
+            });
+          } else {
+            days.push({
+              availableFrom: convertDate(NaN),
+              availableUntil: convertDate(NaN)
+            });
+          }
         }
-      }
 
-      facilitatorUsers.push(new UserModel({
-        firstName: FAndGSO[i]["First Name"],
-        lastName: FAndGSO[i]["Last Name"],
-        address: FAndGSO[i]["Address"],
-        email: FAndGSO[i]["Email"],
-        userType: UserType.FACILITATOR,
-        phoneNumber: FAndGSO[i]["Phone Number"],
-        _facilitator: new FacilitatorModel({
-          trained: ((FAndGSO[i]["Trained"]) ? FAndGSO[i]["Trained"].split(",") : ""),
-          reliable: ((FAndGSO[i]["Reliable"] === "Yes") ? true : false),
-          city: new CityModel({
-            city: FAndGSO[i]["City"]
-          }),
-          availabilities: availabilities,
-          specificUnavailabilities: [
-            {
-              notAvailableFrom: convertDate(FAndGSO[i]["Specific Unavailability 1 From"]),
-              notAvailableUntil: convertDate(FAndGSO[i]["Specific Unavailability 1 To"]),
-              notes: FAndGSO[i]["Notes 1"],
-            },
-            {
-              notAvailableFrom: convertDate(FAndGSO[i]["Specific Unavailability 2 From"]),
-              notAvailableUntil: convertDate(FAndGSO[i]["Specific Unavailability 2 To"]),
-              notes: FAndGSO[i]["Notes 2"],
-            },
-            {
-              notAvailableFrom: convertDate(FAndGSO[i]["Specific Unavailability 3 From"]),
-              notAvailableUntil: convertDate(FAndGSO[i]["Specific Unavailability 3 To"]),
-              notes: FAndGSO[i]["Notes 3"],
-            },
-            {
-              notAvailableFrom: convertDate(FAndGSO[i]["Specific Unavailability 4 From"]),
-              notAvailableUntil: convertDate(FAndGSO[i]["Specific Unavailability 4 To"]),
-              notes: FAndGSO[i]["Notes 4"],
-            },
-            {
-              notAvailableFrom: convertDate(FAndGSO[i]["Specific Unavailability 5 From"]),
-              notAvailableUntil: convertDate(FAndGSO[i]["Specific Unavailability 5 To"]),
-              notes: FAndGSO[i]["Notes 5"],
-            },
-            {
-              notAvailableFrom: convertDate(FAndGSO[i]["Specific Unavailability 6 From"]),
-              notAvailableUntil: convertDate(FAndGSO[i]["Specific Unavailability 6 To"]),
-              notes: FAndGSO[i]["Notes 6"],
-            }],
-          assignedTimes: []
-        })
-      }));
+        const availabilities: Availability[] = [];
+
+        for (let d = new Date(from); d <= to; d.setDate(d.getDate() + 1)) {
+          const times = days[d.getDay()];
+          const availableFrom = new Date(times.availableFrom);
+          const availableUntil = new Date(times.availableUntil);
+
+          if (!isNaN(availableFrom.getTime()) && !isNaN(availableUntil.getTime())) {
+            availabilities.push({
+              availableFrom: new Date(new Date(d).setHours(availableFrom.getHours(), availableFrom.getMinutes(), availableFrom.getSeconds())),
+              availableUntil: new Date(new Date(d).setHours(availableUntil.getHours(), availableUntil.getMinutes(), availableUntil.getSeconds()))
+            });
+          }
+        }
+
+        const trained = [];
+        for (let k = 0; k < workshops.length; k++) {
+          if (FAndGSO[i][workshops[k]] === "Y") {
+            trained.push(workshops[k]);
+          } else {
+            continue;
+          }
+        }
+
+        facilitatorUsers.push(new UserModel({
+          firstName: FAndGSO[i]["Name"],
+          //lastName: FAndGSO[i]["Last Name"],
+          //address: FAndGSO[i]["Address"],
+          //email: FAndGSO[i]["Email"],
+          userType: UserType.FACILITATOR,
+          //phoneNumber: FAndGSO[i]["Phone Number"],
+          _facilitator: new FacilitatorModel({
+            trained: ((FAndGSO[i]["Trained"]) ? FAndGSO[i]["Trained"].split(",") : ""),
+            //reliable: ((FAndGSO[i]["Reliable"] === "Yes") ? true : false),
+            //city: new CityModel({
+            //  city: FAndGSO[i]["City"]
+            //}),
+            availabilities: availabilities,
+            /*specificUnavailabilities: [
+              {
+                notAvailableFrom: convertDate(FAndGSO[i]["Specific Unavailability 1 From"]),
+                notAvailableUntil: convertDate(FAndGSO[i]["Specific Unavailability 1 To"]),
+                notes: FAndGSO[i]["Notes 1"],
+              },
+              {
+                notAvailableFrom: convertDate(FAndGSO[i]["Specific Unavailability 2 From"]),
+                notAvailableUntil: convertDate(FAndGSO[i]["Specific Unavailability 2 To"]),
+                notes: FAndGSO[i]["Notes 2"],
+              },
+              {
+                notAvailableFrom: convertDate(FAndGSO[i]["Specific Unavailability 3 From"]),
+                notAvailableUntil: convertDate(FAndGSO[i]["Specific Unavailability 3 To"]),
+                notes: FAndGSO[i]["Notes 3"],
+              },
+              {
+                notAvailableFrom: convertDate(FAndGSO[i]["Specific Unavailability 4 From"]),
+                notAvailableUntil: convertDate(FAndGSO[i]["Specific Unavailability 4 To"]),
+                notes: FAndGSO[i]["Notes 4"],
+              },
+              {
+                notAvailableFrom: convertDate(FAndGSO[i]["Specific Unavailability 5 From"]),
+                notAvailableUntil: convertDate(FAndGSO[i]["Specific Unavailability 5 To"]),
+                notes: FAndGSO[i]["Notes 5"],
+              },
+              {
+                notAvailableFrom: convertDate(FAndGSO[i]["Specific Unavailability 6 From"]),
+                notAvailableUntil: convertDate(FAndGSO[i]["Specific Unavailability 6 To"]),
+                notes: FAndGSO[i]["Notes 6"],
+              }], */
+            assignedTimes: [],
+            maxWS: FAndGSO[i]["Max w/s"]
+          })
+        }));
+      }
     }
   }
   return facilitatorUsers;

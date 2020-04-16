@@ -12,13 +12,13 @@ export enum UserType {
 
 export class User extends Typegoose {
 
-  @prop({ required: true, index: true, unique: true, validate: /\S+@\S+\.\S+/ })
+  @prop({ required: false, index: true, unique: true, validate: /\S+@\S+\.\S+/ })
   public email!: string;
 
   @prop({ required: true })
   public firstName!: string;
 
-  @prop({ required: true })
+  @prop({ required: false })
   public lastName!: string;
 
   @prop({ required: false })
@@ -27,7 +27,7 @@ export class User extends Typegoose {
   @prop({ required: true, enum: UserType })
   public userType!: UserType;
 
-  @prop({ required: true })
+  @prop({ required: false })
   public phoneNumber!: string;
 
   @prop({ ref: Facilitator })
