@@ -51,9 +51,9 @@ export function getGuestSpeakers(file: Buffer, from: Date, to: Date): User[] {
   const u = wb.Sheets["Master availability"];
   const FAndGSO: any[] = XLSX.utils.sheet_to_json(u);
   const GSUsers: User[] = [];
-  const morning = 0.333333333; //8am
+  const morning = 0.3333333333333333; //8am
   const midday = 0.5; //12pm
-  const evening = 0.708333333; //5pm
+  const evening = 0.7083333333333334; //5pm
   const workshops = ["P123", "P456", "DHD", "HHI", "CSE", "Pe", "DHDe",
     "DADe", "HHIe", "CSEe", "TBIdea", "Ah", "C"];
   const a = ["Sun am", "Mon am", "Mon pm", "Tues am", "Tues pm", "Wed am",
@@ -125,6 +125,7 @@ export function getGuestSpeakers(file: Buffer, from: Date, to: Date): User[] {
           //  city: FAndGSO[i]["City"]
           //}),
           availabilities: availabilities,
+          specificUnavailabilities: [],
           /*specificUnavailabilities: [
             {
               notAvailableFrom: convertDate(FAndGSO[i]["Specific Unavailability 1 From"]),
@@ -178,81 +179,79 @@ export function getFacilitators(file: Buffer, from: Date, to: Date): User[] {
   const u = wb.Sheets["Master availability"];
   const FAndGSO: any[] = XLSX.utils.sheet_to_json(u);
   const facilitatorUsers: User[] = [];
-  const morning = 0.333333333; //8am
+  const morning = 0.3333333333333333; //8am
   const midday = 0.5; //12pm
-  const evening = 0.708333333; //5pm
+  const evening = 0.7083333333333334; //5pm
   const workshops = ["P123", "P456", "DHD", "HHI", "CSE", "Pe", "DHDe",
     "DADe", "HHIe", "CSEe", "TBIdea", "Ah", "C"];
   const a = ["Sun am", "Mon am", "Mon pm", "Tues am", "Tues pm", "Wed am",
     "Wed pm", "Thu am", "Thu pm", "Fri am", "Fri pm", "Sat am", "Sat pm"];
   for (let i = 0; i < Object.keys(FAndGSO).length; i++) {
     if (FAndGSO[i]["Staff code"] === "F") {
-      for (let i = 0; i < Object.keys(FAndGSO).length; i++) {
-        const days = [];
-
-        for (let j = 0; j < a.length; j += 2) {
-          if (FAndGSO[i][a[j]] === "Y" && FAndGSO[i][a[j + 1]] === "Y") {
-            days.push({
-              availableFrom: convertDate(morning),
-              availableUntil: convertDate(evening)
-            });
-          } else if (FAndGSO[i][a[j]] === "Y" && FAndGSO[i][a[j + 1]] === "N") {
-            days.push({
-              availableFrom: convertDate(morning),
-              availableUntil: convertDate(midday)
-            });
-          } else if (FAndGSO[i][a[j]] === "Y" && FAndGSO[i][a[j + 1]] === "N") {
-            days.push({
-              availableFrom: convertDate(midday),
-              availableUntil: convertDate(evening)
-            });
-          } else {
-            days.push({
-              availableFrom: convertDate(NaN),
-              availableUntil: convertDate(NaN)
-            });
-          }
+      const days = [];
+      for (let j = 0; j < a.length; j += 2) {
+        if (FAndGSO[i][a[j]] === "Y" && FAndGSO[i][a[j + 1]] === "Y") {
+          days.push({
+            availableFrom: convertDate(morning),
+            availableUntil: convertDate(evening)
+          });
+        } else if (FAndGSO[i][a[j]] === "Y" && FAndGSO[i][a[j + 1]] === "N") {
+          days.push({
+            availableFrom: convertDate(morning),
+            availableUntil: convertDate(midday)
+          });
+        } else if (FAndGSO[i][a[j]] === "Y" && FAndGSO[i][a[j + 1]] === "N") {
+          days.push({
+            availableFrom: convertDate(midday),
+            availableUntil: convertDate(evening)
+          });
+        } else {
+          days.push({
+            availableFrom: convertDate(NaN),
+            availableUntil: convertDate(NaN)
+          });
         }
+      }
 
-        const availabilities: Availability[] = [];
+      const availabilities: Availability[] = [];
 
-        for (let d = new Date(from); d <= to; d.setDate(d.getDate() + 1)) {
-          const times = days[d.getDay()];
-          const availableFrom = new Date(times.availableFrom);
-          const availableUntil = new Date(times.availableUntil);
+      for (let d = new Date(from); d <= to; d.setDate(d.getDate() + 1)) {
+        const times = days[d.getDay()];
+        const availableFrom = new Date(times.availableFrom);
+        const availableUntil = new Date(times.availableUntil);
 
-          if (!isNaN(availableFrom.getTime()) && !isNaN(availableUntil.getTime())) {
-            availabilities.push({
-              availableFrom: new Date(new Date(d).setHours(availableFrom.getHours(), availableFrom.getMinutes(), availableFrom.getSeconds())),
-              availableUntil: new Date(new Date(d).setHours(availableUntil.getHours(), availableUntil.getMinutes(), availableUntil.getSeconds()))
-            });
-          }
+        if (!isNaN(availableFrom.getTime()) && !isNaN(availableUntil.getTime())) {
+          availabilities.push({
+            availableFrom: new Date(new Date(d).setHours(availableFrom.getHours(), availableFrom.getMinutes(), availableFrom.getSeconds())),
+            availableUntil: new Date(new Date(d).setHours(availableUntil.getHours(), availableUntil.getMinutes(), availableUntil.getSeconds()))
+          });
         }
+      }
 
-        const trained = [];
-        for (let k = 0; k < workshops.length; k++) {
-          if (FAndGSO[i][workshops[k]] === "Y") {
-            trained.push(workshops[k]);
-          } else {
-            continue;
-          }
+      const trained = [];
+      for (let k = 0; k < workshops.length; k++) {
+        if (FAndGSO[i][workshops[k]] === "Y") {
+          trained.push(workshops[k]);
+        } else {
+          continue;
         }
+      }
 
-        facilitatorUsers.push(new UserModel({
-          firstName: FAndGSO[i]["Name"],
-          //lastName: FAndGSO[i]["Last Name"],
-          //address: FAndGSO[i]["Address"],
-          //email: FAndGSO[i]["Email"],
-          userType: UserType.FACILITATOR,
-          //phoneNumber: FAndGSO[i]["Phone Number"],
-          _facilitator: new FacilitatorModel({
-            trained: ((FAndGSO[i]["Trained"]) ? FAndGSO[i]["Trained"].split(",") : ""),
-            //reliable: ((FAndGSO[i]["Reliable"] === "Yes") ? true : false),
-            //city: new CityModel({
-            //  city: FAndGSO[i]["City"]
-            //}),
-            availabilities: availabilities,
-            /*specificUnavailabilities: [
+      facilitatorUsers.push(new UserModel({
+        firstName: FAndGSO[i]["Name"],
+        //lastName: FAndGSO[i]["Last Name"],
+        //address: FAndGSO[i]["Address"],
+        //email: FAndGSO[i]["Email"],
+        userType: UserType.FACILITATOR,
+        //phoneNumber: FAndGSO[i]["Phone Number"],
+        _facilitator: new FacilitatorModel({
+          trained: trained,
+          //reliable: ((FAndGSO[i]["Reliable"] === "Yes") ? true : false),
+          //city: new CityModel({
+          //  city: FAndGSO[i]["City"]
+          //}),
+          availabilities: availabilities,
+          /*specificUnavailabilities: [
               {
                 notAvailableFrom: convertDate(FAndGSO[i]["Specific Unavailability 1 From"]),
                 notAvailableUntil: convertDate(FAndGSO[i]["Specific Unavailability 1 To"]),
@@ -283,11 +282,10 @@ export function getFacilitators(file: Buffer, from: Date, to: Date): User[] {
                 notAvailableUntil: convertDate(FAndGSO[i]["Specific Unavailability 6 To"]),
                 notes: FAndGSO[i]["Notes 6"],
               }], */
-            assignedTimes: [],
-            maxWS: FAndGSO[i]["Max w/s"]
-          })
-        }));
-      }
+          assignedTimes: [],
+          maxWS: FAndGSO[i]["Max w/s"]
+        })
+      }));
     }
   }
   return facilitatorUsers;
@@ -418,7 +416,7 @@ export function printBooking(b: Booking[]): Buffer {
   const sheetName = "Roster";
   const wb = XLSX.utils.book_new();
   const wsData = [
-    ["Booking Date", "Location", "Pax", "Workshop", "Level", "Teacher", "Phone", "Facilitator", "Facilitator Mobile", "Facilitator Email", "GuestSpeaker", "Guest Speaker Mobile", "Guest Speaker Email", "TimeBegin", "TimeEnd"],
+    ["Booking Date", "Location", "Pax", "Workshop", "Level", "Teacher", "Phone", "Facilitator", "GuestSpeaker", "TimeBegin", "TimeEnd"],
   ];
 
   for (let i = 0; i < Object.keys(b).length; i++) {
@@ -462,16 +460,16 @@ export function printBooking(b: Booking[]): Buffer {
 
     if (b[i].facilitator instanceof UserModel) {
       const facilitator = b[i].facilitator as User;
-      row.push(facilitator.firstName, facilitator.phoneNumber, facilitator.email);
+      row.push(facilitator.firstName);
     } else {
-      row.push("", "", "");
+      row.push("");
     }
 
     if (b[i].guestSpeaker instanceof UserModel) {
       const guestSpeaker = b[i].guestSpeaker as User;
-      row.push(guestSpeaker.firstName, guestSpeaker.phoneNumber, guestSpeaker.email);
+      row.push(guestSpeaker.firstName);
     } else {
-      row.push("", "", "");
+      row.push("");
     }
 
     row.push(timeBegin, timeEnd);
