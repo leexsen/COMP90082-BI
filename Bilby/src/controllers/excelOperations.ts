@@ -113,17 +113,17 @@ export function getGuestSpeakers(file: Buffer, from: Date, to: Date): User[] {
     if (FAndGSO[i]["Staff code"] === "GS") {
       GSUsers.push(new UserModel({
         firstName: FAndGSO[i]["First Name"],
-        //lastName: FAndGSO[i]["Last Name"],
-        //address: FAndGSO[i]["Address"],
-        //email: FAndGSO[i]["Email"],
+        lastName: "",
+        address: "",
+        email: "",
         userType: UserType.GUEST_SPEAKER,
-        //phoneNumber: FAndGSO[i]["Phone Number"],
+        phoneNumber: "",
         _guestSpeaker: new GuestSpeakerModel({
           trained: trained,
-          //reliable: ((FAndGSO[i]["Reliable"] === "Yes") ? true : false),
-          //city: new CityModel({
-          //  city: FAndGSO[i]["City"]
-          //}),
+          reliable: true,
+          city: new CityModel({
+            city: "Melbourne"
+          }),
           availabilities: availabilities,
           specificUnavailabilities: [],
           /*specificUnavailabilities: [
@@ -158,7 +158,7 @@ export function getGuestSpeakers(file: Buffer, from: Date, to: Date): User[] {
               notes: FAndGSO[i]["Notes 6"],
             }], */
           assignedTimes: [],
-          maxWS: FAndGSO[i]["Max w/s"]
+          //maxWS: FAndGSO[i]["Max w/s"]
         })
       }));
     }
@@ -239,18 +239,19 @@ export function getFacilitators(file: Buffer, from: Date, to: Date): User[] {
 
       facilitatorUsers.push(new UserModel({
         firstName: FAndGSO[i]["Name"],
-        //lastName: FAndGSO[i]["Last Name"],
-        //address: FAndGSO[i]["Address"],
-        //email: FAndGSO[i]["Email"],
+        lastName: "",
+        address: "",
+        email: "",
         userType: UserType.FACILITATOR,
-        //phoneNumber: FAndGSO[i]["Phone Number"],
+        phoneNumber: "",
         _facilitator: new FacilitatorModel({
           trained: trained,
-          //reliable: ((FAndGSO[i]["Reliable"] === "Yes") ? true : false),
-          //city: new CityModel({
-          //  city: FAndGSO[i]["City"]
-          //}),
+          reliable: true,
+          city: new CityModel({
+            city: "Melbourne"
+          }),
           availabilities: availabilities,
+          specificUnavailabilities: [],
           /*specificUnavailabilities: [
               {
                 notAvailableFrom: convertDate(FAndGSO[i]["Specific Unavailability 1 From"]),
@@ -283,7 +284,7 @@ export function getFacilitators(file: Buffer, from: Date, to: Date): User[] {
                 notes: FAndGSO[i]["Notes 6"],
               }], */
           assignedTimes: [],
-          maxWS: FAndGSO[i]["Max w/s"]
+          //maxWS: FAndGSO[i]["Max w/s"]
         })
       }));
     }
