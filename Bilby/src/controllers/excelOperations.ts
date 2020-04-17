@@ -113,11 +113,11 @@ export function getGuestSpeakers(file: Buffer, from: Date, to: Date): User[] {
     if (FAndGSO[i]["Staff code"] === "GS") {
       GSUsers.push(new UserModel({
         firstName: FAndGSO[i]["First Name"],
-        lastName: "i",
-        address: "i",
-        email: "i",
+        lastName: "",
+        address: "",
+        email: "",
         userType: UserType.GUEST_SPEAKER,
-        phoneNumber: "i",
+        phoneNumber: "",
         _guestSpeaker: new GuestSpeakerModel({
           trained: trained,
           reliable: true,
@@ -239,11 +239,11 @@ export function getFacilitators(file: Buffer, from: Date, to: Date): User[] {
 
       facilitatorUsers.push(new UserModel({
         firstName: FAndGSO[i]["Name"],
-        lastName: "i",
-        address: "i",
-        email: "i",
+        lastName: "",
+        address: "",
+        email: "",
         userType: UserType.FACILITATOR,
-        phoneNumber: "i",
+        phoneNumber: "",
         _facilitator: new FacilitatorModel({
           trained: trained,
           reliable: true,
