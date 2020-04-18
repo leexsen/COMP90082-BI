@@ -43,6 +43,7 @@ public class Controller {
     public static String outputDirectoryPath;
     private String customWordTemplatePath;
     private int timeSetting;
+    private String timeSettingString;
     private boolean PDFSetting;
     private boolean WordSetting;
     private boolean ExcelSetting;
@@ -492,6 +493,7 @@ public class Controller {
     public void setTimeSetting(String key) {
 
         this.timeSetting = timeDictionary.get(key);
+        this.timeSettingString = key;
 
     }
 
@@ -543,7 +545,7 @@ public class Controller {
 
             writer.println(customWordTemplatePath);
 
-            writer.println(timeSetting);
+            writer.println(timeSettingString);
 
             writer.println(WordSetting);
             writer.println(PDFSetting);

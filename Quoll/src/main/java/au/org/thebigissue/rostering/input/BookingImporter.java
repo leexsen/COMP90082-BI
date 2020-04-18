@@ -184,17 +184,14 @@ public class BookingImporter {
                     // find the correct shift for the facilitator
                     for (FacilitatorShift fs : facilitatorShifts) {
                         // Hack on staff name (to capture those without a last name on file)
-                        if (fs.getDate().equals(date) &&
-                                (fs.getStaffName().equals(facilitator) || fs.getStaffName().equals(facilitator + " "))) {
+                        if (fs.getDate().equals(date) && fs.getStaffName().equals(facilitator)) {
                             overrideFS = fs;
                             break;
                         }
                     }
                     // find the correct shift for the guest speaker
                     for (GuestSpeakerShift gss : guestSpeakerShifts) {
-                        if (gss.getDate().equals(date) &&
-                                (gss.getStaffName().equals(guestSpeaker) ||
-                                        gss.getStaffName().equals(guestSpeaker + " "))) {
+                        if (gss.getDate().equals(date) && gss.getStaffName().equals(guestSpeaker)) {
                             overrideGSS = gss;
                             break;
                         }
@@ -204,7 +201,7 @@ public class BookingImporter {
                     Workshop overriddenWorkshop = new Workshop(id, school, course, location, offsite, level, pax,
                             contactName, email, phone, workshop,
                             rowIndex, facilitatorColumn, rowIndex, guestSpeakerColumn,
-                            overrideFS, overrideGSS, date, startTime, endTime);
+                            overrideFS, overrideGSS, date, startTime, endTime, roster);
                     // add to workshop list
                     workshopList.add(overriddenWorkshop);
                     // add to overridden workshop list

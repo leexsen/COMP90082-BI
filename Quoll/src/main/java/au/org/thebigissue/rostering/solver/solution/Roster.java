@@ -134,9 +134,11 @@ public class Roster extends AbstractPersistable {
 
             // Updating the facilitator shifts
             for(FacilitatorShift fs : getFacilitatorShiftList()){
+                if (fs == null)
+                    continue;
 
                 // if match found with workshop's shift,
-                if(w.getFacilitatorShift().equals(fs)){
+                if(fs.equals(w.getFacilitatorShift())) {
                     // remove shift from updated shift list,
                     updatedFacilitatorShifts.remove(fs);
                     // shift's workshops (before updating)
@@ -151,10 +153,12 @@ public class Roster extends AbstractPersistable {
             }
 
             // Updating the guest speaker shifts
-            for(GuestSpeakerShift gss : getGuestSpeakerShiftList()){
+            for(GuestSpeakerShift gss : getGuestSpeakerShiftList()) {
+                if (gss == null)
+                    continue;
 
                 // if match found with workshop's shift,
-                if(w.getGuestSpeakerShift().equals(gss)){
+                if(gss.equals(w.getGuestSpeakerShift())){
                     // remove shift from updated shift list,
                     updatedGuestSpeakerShifts.remove(gss);
                     // shift's workshops (before updating)

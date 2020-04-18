@@ -31,7 +31,7 @@ public class Staff extends AbstractPersistable {
 
     public String getName() {
 
-        return (firstName + " " + lastName);
+        return (firstName + " " + lastName).strip();
     }
 
     public int getMaxSessions() {

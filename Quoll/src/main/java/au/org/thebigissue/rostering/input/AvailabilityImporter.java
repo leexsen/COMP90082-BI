@@ -84,7 +84,7 @@ public class AvailabilityImporter {
     private String DEFAULT_AM_START_TIME = "08:00";
     private String DEFAULT_AM_END_TIME = "12:00";
     private String DEFAULT_PM_START_TIME = "12:00";
-    private String DEFAULT_PM_END_TIME = "18:00";
+    private String DEFAULT_PM_END_TIME = "20:00";
 
     private Sheet availabilitySheet = null;
 

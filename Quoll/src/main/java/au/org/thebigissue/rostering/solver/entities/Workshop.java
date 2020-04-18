@@ -1,9 +1,7 @@
 package au.org.thebigissue.rostering.solver.entities;
 
-import au.org.thebigissue.rostering.input.MovableWorkshopFilter;
 import au.org.thebigissue.rostering.solver.AbstractPersistable;
 import au.org.thebigissue.rostering.solver.solution.Roster;
-import au.org.thebigissue.rostering.solver.variables.GuestSpeaker;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
@@ -22,8 +20,8 @@ import java.util.Locale;
  * A workshop session
  * Contains all details about the workshop, e.g. location, school, staff members, time and date
  */
-@PlanningEntity(movableEntitySelectionFilter =
-        MovableWorkshopFilter.class)
+//@PlanningEntity(movableEntitySelectionFilter = MovableWorkshopFilter.class)
+@PlanningEntity
 public class Workshop extends AbstractPersistable {
 
     // static information for each workshop; from input data
@@ -55,7 +53,7 @@ public class Workshop extends AbstractPersistable {
     private GuestSpeakerShift guestSpeakerShift;
 
     // override flag, sets workshop entities to be unmovable (not changeable) by Optaplanner
-    private boolean overridden = false;
+    //private boolean overridden = false;
 
     private Roster roster;
     private List<FacilitatorShift> facilitatorShiftList;
@@ -122,7 +120,7 @@ public class Workshop extends AbstractPersistable {
                         String offsite, String level, String pax, String contactName, String email, String phone,
                             String workshop, int rowFacilitator, int columnFacilitator, int rowGuest, int columnGuest,
                             FacilitatorShift overrideFS, GuestSpeakerShift overrideGSS,
-                                LocalDate date, LocalTime startTime, LocalTime endTime) {
+                                LocalDate date, LocalTime startTime, LocalTime endTime, Roster roster) {
         this.id = id;
         this.school = school;
         this.course = course;
@@ -149,7 +147,44 @@ public class Workshop extends AbstractPersistable {
         endDateTime = LocalDateTime.of(date, endTime);
         duration = Duration.between(startDateTime, endDateTime);
         // flag that workshop should not be changed by Optaplanner
-        overridden = true;
+        //overridden = true;
+
+        /* a workaround for supporting immutable variables since optaPlanner currently doesn't
+           support it (https://issues.redhat.com/browse/PLANNER-124?_sscc=t)
+           In this way, the software allows users to manually assign either a facilitator, a guest speaker,
+           or both, which isn't allowed in the older code (without this workaround). In the previous
+           version of the code, a manually assigned facilitator must come with a manually assigned guest speaker,
+           which means either both are manually assigned or both are not manually assigned at all.
+         */
+        if (overrideFS != null) {
+            facilitatorShiftList = new ArrayList<>();
+            facilitatorShiftList.add(overrideFS);
+
+        } else {
+            facilitatorShiftList = roster.getFacilitatorShiftList();
+            ArrayList<FacilitatorShift> newFacilitatorShiftList = new ArrayList<>();
+            for (FacilitatorShift shift : facilitatorShiftList) {
+                if (shift.getDate().equals(this.startDateTime.toLocalDate())) {
+                    newFacilitatorShiftList.add(shift);
+                }
+            }
+            facilitatorShiftList = newFacilitatorShiftList;
+        }
+
+        if (overrideGSS != null) {
+            guestSpeakerShiftList = new ArrayList<>();
+            guestSpeakerShiftList.add(overrideGSS);
+
+        } else {
+            guestSpeakerShiftList = roster.getGuestSpeakerShiftList();
+            ArrayList<GuestSpeakerShift> newGuestSpeakerShiftList = new ArrayList<>();
+            for (GuestSpeakerShift shift : guestSpeakerShiftList) {
+                if (shift.getDate().equals(this.startDateTime.toLocalDate())) {
+                    newGuestSpeakerShiftList.add(shift);
+                }
+            }
+            guestSpeakerShiftList = newGuestSpeakerShiftList;
+        }
     }
 
     // old constructor used in RosteringGenerator
@@ -372,7 +407,7 @@ public class Workshop extends AbstractPersistable {
     public String getOffsite() {
         return offsite;
     }
-    public boolean getOverridden(){ return overridden; }
+    //public boolean getOverridden(){ return overridden; }
 
     public String getDateString() {
 
