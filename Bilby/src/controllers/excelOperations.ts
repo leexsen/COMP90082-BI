@@ -21,17 +21,73 @@ function convertDate(excelDate: number): Date {
 }
 
 /**
+ * Function for getting a valid time string to convert to Date
+ * @param {string} timeString The time to be converted
+ * @returns {string} valid string to convert to Date
+ * maacah
+ */
+function convertTimeString(timeString: string): string {
+  //console.log(timeString.indexOf("."))
+  const a = timeString.toUpperCase();
+  let b = "";
+  if (timeString.indexOf(".") !== -1) {
+    b = a.replace(".", ":").replace("AM", " AM").replace("PM", " PM");
+  } else {
+    b = a.replace("AM", ":00 AM").replace("PM", ":00 PM");
+  }
+  return b;
+}
+
+/**
+ * Function for getting month string
+ * @param {String} month Month
+ * @returns {String} full month string
+ * maacah -- should make more efficient
+ */
+function convertMonth(month: string): string {
+  if (month === "Jan") {
+    return "January";
+  } else if (month === "Feb") {
+    return "February";
+  } else if (month === "Mar") {
+    return "March";
+  } else if (month === "Apr") {
+    return "April";
+  } else if (month === "May") {
+    return "May";
+  } else if (month === "Jun") {
+    return "June";
+  } else if (month === "Jul") {
+    return "July";
+  } else if (month === "Aug") {
+    return "August";
+  } else if (month === "Sep") {
+    return "September";
+  } else if (month === "Oct") {
+    return "October";
+  } else if (month === "Nov") {
+    return "November";
+  } else if (month === "Dec") {
+    return "December";
+  } else {
+    return "";
+  }
+}
+
+/**
  * Function to get the Cities
  * @param {Buffer} file - The excel sheet
  * @returns {City} Cities array
  */
 export function getCities(file: Buffer): City[] {
-  const wb = XLSX.read(file, { type: "buffer" });
-  const s = wb.Sheets["Locations"];
-  const myDataCities: any[] = XLSX.utils.sheet_to_json(s);
+  //edited by maacah
+  //const wb = XLSX.read(file, { type: "buffer" });
+  //const s = wb.Sheets["Locations"];
+  //const myDataCities: any[] = XLSX.utils.sheet_to_json(s);
   const cities: City[] = [];
+  const citiesHard = ["Melbourne, Sydney, Canberra"];
 
-  Object.values(myDataCities[0]).forEach((city) => {
+  citiesHard.forEach((city) => {
     cities.push(new CityModel({ city: city }));
   });
   return cities;
@@ -327,16 +383,18 @@ export function getSchools(file: Buffer): User[] {
   * @returns {Workshop} Workshop array
   */
 export function getWorkshopTypes(file: Buffer): Workshop[] {
-  const wb = XLSX.read(file, { type: "buffer" });
-  const s = wb.Sheets["Workshops"];
-  const myDataWorkshops: any[] = XLSX.utils.sheet_to_json(s, { header: "A" });
+  //const wb = XLSX.read(file, { type: "buffer" });
+  //const s = wb.Sheets["Workshops"];
+  //const myDataWorkshops: any[] = XLSX.utils.sheet_to_json(s, { header: "A" });
+  const w = ["P123", "P456", "DHD", "HHI", "CSE", "Pe", "DHDe",
+    "DADe", "HHIe", "CSEe", "TBIdea", "Ah", "C"];
   const workshops: Workshop[] = [];
 
-  for (let i = 2; i < Object.keys(myDataWorkshops).length; i++) {
+  for (let i = 0; i < w.length; i++) {
     workshops.push(new WorkshopModel({
-      workshopName: myDataWorkshops[i]["A"],
-      requireFacilitator: (myDataWorkshops[i]["B"]),
-      requireGuestSpeaker: (myDataWorkshops[i]["C"])
+      workshopName: w[i],
+      requireFacilitator: true,
+      requireGuestSpeaker: true
     }));
   }
   return workshops;
@@ -352,67 +410,156 @@ export function getWorkshopTypes(file: Buffer): Workshop[] {
  */
 export function getBookings(file: Buffer, cityName: string, fromDate: Date, toDate: Date): Booking[] {
   const wb = XLSX.read(file, { type: "buffer" });
-  if (wb.Sheets[cityName]) {
-    const m = wb.Sheets[cityName];
-    const cityObject: any[] = XLSX.utils.sheet_to_json(m, { header: "A" });
-    const workshops = getWorkshopTypes(file);
-    const booking: Booking[] = [];
-    toDate.setDate(toDate.getDate() + 1);
-    for (let i = 2; i < Object.keys(cityObject).length; i++) {
-      const workshop = workshops.filter(workshop => workshop.workshopName === cityObject[i]["G"]);
-      const da = convertDate(cityObject[i]["B"]);
-      if (da >= fromDate && da <= toDate) {
-        booking.push(new BookingModel({
-          state: BookingState.PENDING,
-          facilitator: undefined,
-          guestSpeaker: undefined,
-          sessionTime: {
-            timeBegin: new Date(convertDate(cityObject[i]["C"]).setFullYear(da.getFullYear(), da.getMonth(), da.getDate())),
-            timeEnd: new Date(convertDate(cityObject[i]["D"]).setFullYear(da.getFullYear(), da.getMonth(), da.getDate()))
-          },
-          city: new CityModel({
-            city: cityName
-          }),
-          location: new LocationModel({
-            name: cityObject[i]["E"],
-            capacity: cityObject[i]["H"],
-          }),
-          workshop: new WorkshopModel({
-            workshopName: cityObject[i]["G"],
-            requireFacilitator: workshop[0].requireFacilitator,
-            requireGuestSpeaker: workshop[0].requireGuestSpeaker
-          }),
-          level: cityObject[i]["I"],
-          teacher: new UserModel({
-            email: cityObject[i]["L"],
-            firstName: cityObject[i]["J"],
-            lastName: cityObject[i]["J"],
-            userType: UserType.TEACHER,
-            phoneNumber: cityObject[i]["M"],
-            _teacher: new TeacherModel({
-              school: new SchoolModel({
-                name: cityObject[i]["K"],
+  for (let sheet = 0; sheet < wb.SheetNames.length; sheet++) {
+    if (wb.SheetNames[sheet][0] === cityName[0] && wb.SheetNames[sheet][0] !== "Master availability") {
+      const month = wb.SheetNames[sheet].slice(1, 4);
+      const monthName = convertMonth(month);
+      const m = wb.Sheets[sheet];
+      const cityObject: any[] = XLSX.utils.sheet_to_json(m);
+      const workshops = getWorkshopTypes(file);
+      const booking: Booking[] = [];
+      const year = "2019"; //hard, needs changing (maacah)
+      const duration = 3; // hard, might need changing
+      let dayOfMonth = 0;
+      toDate.setDate(toDate.getDate() + 1); //not sure what's happening (maacah)
+      for (let a = 0; a < cityObject.length; a++) {
+        if (cityObject[a]["Date"]) {
+          dayOfMonth = cityObject[a]["Date"];
+        }
+        const dateString = monthName + " " + dayOfMonth.toString() + " " + year;
+        for (let i = 0; i < workshops.length; i++) {
+          const workshopName = workshops[i].workshopName;
+          if (cityObject[a][workshopName]) {
+            const da = new Date(dateString);
+            let location = "";
+            let capacity = 0;
+            if (da >= fromDate && da <= toDate) {
+              if (cityObject[a]["Collins Street"]) {
+                location = "Collins Street";
+                capacity = 35;
+              } else if (cityObject[a]["DHW"]) {
+                location = "DHW";
+                capacity = 35;
+              } else if (cityObject[a]["Other"]) {
+                location = cityObject[a]["Location"];
+                capacity = 35;
+              } else {
+                continue;
+              }
+              const timeString = convertTimeString(cityObject[a]["Collins Street"]);
+              const dateTimeString = dateString + " " + timeString;
+              const timeBegin = new Date(dateTimeString);
+              booking.push(new BookingModel({
+                state: BookingState.PENDING,
+                facilitator: undefined,
+                guestSpeaker: undefined,
+                sessionTime: {
+                  timeBegin: timeBegin,
+                  timeEnd: new Date(timeBegin.setTime(timeBegin.getTime() + (duration * 60 * 60 * 1000)))
+                },
                 city: new CityModel({
                   city: cityName
-                })
-              })
-            })
-          }),
-          firstTime: false, // Check This ..cant find any first time option in the excel sheet
-        }));
+                }),
+                location: new LocationModel({
+                  name: location,
+                  capacity: capacity // need to update to "Pax" or check if correct
+                }),
+                workshop: new WorkshopModel({
+                  workshopName: workshopName,
+                  requireFacilitator: true,
+                  requireGuestSpeaker: true, // need to double check
+                }),
+                level: cityObject[a]["Level"],
+                teacher: new UserModel({
+                  email: "",
+                  firstName: "Jane",
+                  lastName: "Doe",
+                  userType: UserType.TEACHER,
+                  phoneNumber: "",
+                  _teacher: new TeacherModel({
+                    school: new SchoolModel({
+                      name: cityObject[a]["School"],
+                      city: new CityModel({
+                        city: cityName
+                      })
+                    })
+                  })
+                }),
+                firstTime: false, //Check this
+              }));
+            }
+          }
+        }
       }
+      return booking;
+    } else {
+      return [];
     }
-    return booking;
-  } else {
-    return [];
-  }
+  } return [];
 }
 
+/*COMMENT HERE
+if (wb.Sheets[cityName]) {
+  const m = wb.Sheets[cityName];
+  const cityObject: any[] = XLSX.utils.sheet_to_json(m, { header: "A" });
+  const workshops = getWorkshopTypes(file);
+  const booking: Booking[] = [];
+  toDate.setDate(toDate.getDate() + 1);
+  for (let i = 2; i < Object.keys(cityObject).length; i++) {
+    const workshop = workshops.filter(workshop => workshop.workshopName === cityObject[i]["G"]);
+    const da = convertDate(cityObject[i]["B"]);
+    if (da >= fromDate && da <= toDate) {
+      booking.push(new BookingModel({
+        state: BookingState.PENDING,
+        facilitator: undefined,
+        guestSpeaker: undefined,
+        sessionTime: {
+          timeBegin: new Date(convertDate(cityObject[i]["C"]).setFullYear(da.getFullYear(), da.getMonth(), da.getDate())),
+          timeEnd: new Date(convertDate(cityObject[i]["D"]).setFullYear(da.getFullYear(), da.getMonth(), da.getDate()))
+        },
+        city: new CityModel({
+          city: cityName
+        }),
+        location: new LocationModel({
+          name: cityObject[i]["E"],
+          capacity: cityObject[i]["H"],
+        }),
+        workshop: new WorkshopModel({
+          workshopName: cityObject[i]["G"],
+          requireFacilitator: workshop[0].requireFacilitator,
+          requireGuestSpeaker: workshop[0].requireGuestSpeaker
+        }),
+        level: cityObject[i]["I"],
+        teacher: new UserModel({
+          email: cityObject[i]["L"],
+          firstName: cityObject[i]["J"],
+          lastName: cityObject[i]["J"],
+          userType: UserType.TEACHER,
+          phoneNumber: cityObject[i]["M"],
+          _teacher: new TeacherModel({
+            school: new SchoolModel({
+              name: cityObject[i]["K"],
+              city: new CityModel({
+                city: cityName
+              })
+            })
+          })
+        }),
+        firstTime: false, // Check This ..cant find any first time option in the excel sheet
+      }));
+    }
+  }
+  return booking;
+} else {
+  return [];
+}
+}
+*/
 /**
- * Function for Getting all the Booking details
- * @param {Booking} b - The Booking array
- * @returns {Buffer} output file
- */
+* Function for Getting all the Booking details
+* @param {Booking} b - The Booking array
+* @returns {Buffer} output file
+*/
 export function printBooking(b: Booking[]): Buffer {
   const sheetName = "Roster";
   const wb = XLSX.utils.book_new();
