@@ -168,12 +168,13 @@ public class BookingImporter {
                 LocalTime endTime = startTime.plusHours(1);
                 String location = getLocation(row, locationIndex);
                 boolean facilitatorOnly = false;
+                String sheetName = sheet.getSheetName();
 
                 // adding workshop normally (no manual override)
                 if (facilitator.equals("") && guestSpeaker.equals("")) {
                     workshopList.add(new Workshop(id, school, course, location, offsite, level, pax, contactName,
                             email, phone, workshop, rowIndex, facilitatorColumn, rowIndex, guestSpeakerColumn,
-                            date, startTime, endTime, facilitatorOnly, roster));
+                            date, startTime, endTime, facilitatorOnly, sheetName, roster));
                 }
                 // overriding facilitator and guest speaker for this workshop
                 else {
@@ -201,7 +202,7 @@ public class BookingImporter {
                     Workshop overriddenWorkshop = new Workshop(id, school, course, location, offsite, level, pax,
                             contactName, email, phone, workshop,
                             rowIndex, facilitatorColumn, rowIndex, guestSpeakerColumn,
-                            overrideFS, overrideGSS, date, startTime, endTime, roster);
+                            overrideFS, overrideGSS, date, startTime, endTime, sheetName, roster);
                     // add to workshop list
                     workshopList.add(overriddenWorkshop);
                     // add to overridden workshop list

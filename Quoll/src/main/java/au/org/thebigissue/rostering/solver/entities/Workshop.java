@@ -47,6 +47,7 @@ public class Workshop extends AbstractPersistable {
     private int columnFacilitator;
     private int rowGuest;
     private int columnGuest;
+    private String sheetName;
 
     // planning variables - OptaPlanner allocates a facilitator and a guest speaker for each Workshop
     private FacilitatorShift facilitatorShift;
@@ -65,7 +66,8 @@ public class Workshop extends AbstractPersistable {
     public Workshop(long id, String school, String course, String location,
                         String offsite, String level, String pax, String contactName, String email, String phone,
                             String workshop, int rowFacilitator, int columnFacilitator, int rowGuest, int columnGuest,
-                                LocalDate date, LocalTime startTime, LocalTime endTime, boolean facilitatorOnly, Roster roster) {
+                                LocalDate date, LocalTime startTime, LocalTime endTime, boolean facilitatorOnly,
+                                    String sheetName, Roster roster) {
         this.id = id;
         this.school = school;
         this.course = course;
@@ -83,6 +85,7 @@ public class Workshop extends AbstractPersistable {
         this.columnFacilitator = columnFacilitator;
         this.rowGuest = rowGuest;
         this.columnGuest = columnGuest;
+        this.sheetName = sheetName;
 
         this.roster = roster;
 
@@ -119,8 +122,9 @@ public class Workshop extends AbstractPersistable {
     public Workshop(long id, String school, String course, String location,
                         String offsite, String level, String pax, String contactName, String email, String phone,
                             String workshop, int rowFacilitator, int columnFacilitator, int rowGuest, int columnGuest,
-                            FacilitatorShift overrideFS, GuestSpeakerShift overrideGSS,
-                                LocalDate date, LocalTime startTime, LocalTime endTime, Roster roster) {
+                                FacilitatorShift overrideFS, GuestSpeakerShift overrideGSS,
+                                    LocalDate date, LocalTime startTime, LocalTime endTime, String sheetName,
+                                        Roster roster) {
         this.id = id;
         this.school = school;
         this.course = course;
@@ -138,6 +142,7 @@ public class Workshop extends AbstractPersistable {
         this.columnFacilitator = columnFacilitator;
         this.rowGuest = rowGuest;
         this.columnGuest = columnGuest;
+        this.sheetName = sheetName;
 
         System.out.println("Overridden: "+offsite + level + pax + contactName + email + phone);
 
@@ -493,6 +498,9 @@ public class Workshop extends AbstractPersistable {
     public int getRowFacilitator() {
         return rowFacilitator;
     }
+
+    public String getSheetName() {return sheetName; }
+
 
     @Override
     public String toString() {

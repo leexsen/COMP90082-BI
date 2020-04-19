@@ -28,17 +28,21 @@ public class ExcelOutput {
         FileInputStream fis = new FileInputStream(excelFile);
         Workbook workbook = new XSSFWorkbook(fis);
 
-        System.out.println("Sheet name: "+workbook.getSheetName(sheet)+" sheet index: "+sheet);
+        // System.out.println("Sheet name: "+workbook.getSheetName(sheet)+" sheet index: "+sheet);
 
         int facilitatorRow;
         int facilitatorColumn;
         int guestRow;
         int guestColumn;
+        String sheetName;
 
         //For every Workshop
         for (Workshop workshop : roster.getWorkshopList()) {
 
             //System.out.println("Made it!"+column);
+
+            // Get the sheet name
+            sheetName = workshop.getSheetName();
 
             //Get the read in cell position for Facilitator
             facilitatorRow = workshop.getRowFacilitator();
@@ -51,7 +55,7 @@ public class ExcelOutput {
             //System.out.println("Read in Guest:"+workbook.getSheetAt(sheet).getRow(row+OFFSET).getCell(column+1).getStringCellValue());
 
             //Write it
-            workbook.getSheetAt(sheet).getRow(facilitatorRow).getCell(facilitatorColumn).setCellValue(facilitator);
+            workbook.getSheet(sheetName).getRow(facilitatorRow).getCell(facilitatorColumn).setCellValue(facilitator);
 
             //System.out.println("Made it again!"+column);
 
@@ -64,7 +68,7 @@ public class ExcelOutput {
 
 
             //Write it
-            workbook.getSheetAt(sheet).getRow(guestRow).getCell(guestColumn).setCellValue(guest);
+            workbook.getSheet(sheetName).getRow(guestRow).getCell(guestColumn).setCellValue(guest);
 
         }
         //Close the file
