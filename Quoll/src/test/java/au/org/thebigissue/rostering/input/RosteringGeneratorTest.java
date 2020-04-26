@@ -2,7 +2,7 @@ package au.org.thebigissue.rostering.input;
 
 import au.org.thebigissue.rostering.solver.solution.Roster;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class RosteringGeneratorTest {
 

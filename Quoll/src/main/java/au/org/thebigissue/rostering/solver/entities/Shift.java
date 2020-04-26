@@ -2,8 +2,6 @@ package au.org.thebigissue.rostering.solver.entities;
 
 import au.org.thebigissue.rostering.output.PDFOutput;
 import au.org.thebigissue.rostering.solver.AbstractPersistable;
-import au.org.thebigissue.rostering.solver.variables.Facilitator;
-import au.org.thebigissue.rostering.solver.variables.GuestSpeaker;
 import au.org.thebigissue.rostering.solver.variables.Staff;
 
 import java.io.IOException;

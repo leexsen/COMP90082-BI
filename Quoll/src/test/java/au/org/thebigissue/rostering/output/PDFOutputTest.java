@@ -1,29 +1,5 @@
 package au.org.thebigissue.rostering.output;
 
-import au.org.thebigissue.rostering.input.RosteringGenerator;
-import au.org.thebigissue.rostering.input.RosteringImporter;
-import au.org.thebigissue.rostering.solver.entities.FacilitatorShift;
-import au.org.thebigissue.rostering.solver.entities.GuestSpeakerShift;
-import au.org.thebigissue.rostering.solver.entities.Workshop;
-import au.org.thebigissue.rostering.solver.solution.Roster;
-import au.org.thebigissue.rostering.solver.variables.Availability;
-import au.org.thebigissue.rostering.solver.variables.Facilitator;
-import au.org.thebigissue.rostering.solver.variables.GuestSpeaker;
-import au.org.thebigissue.rostering.solver.variables.Staff;
-import org.junit.Before;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.cglib.core.Local;
-import org.optaplanner.core.api.solver.Solver;
-import org.optaplanner.core.api.solver.SolverFactory;
-
-import java.io.IOException;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-
-
 class PDFOutputTest {
 
 

@@ -7,7 +7,6 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
 import org.optaplanner.core.api.score.Score;
 import org.optaplanner.core.api.score.constraint.Indictment;
-import org.w3c.dom.css.RGBColor;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

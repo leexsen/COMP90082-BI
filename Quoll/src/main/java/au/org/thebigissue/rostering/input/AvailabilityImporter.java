@@ -4,8 +4,9 @@ import au.org.thebigissue.rostering.solver.variables.Availability;
 import au.org.thebigissue.rostering.solver.variables.Facilitator;
 import au.org.thebigissue.rostering.solver.variables.GuestSpeaker;
 import au.org.thebigissue.rostering.solver.variables.Staff;
-import org.apache.commons.math3.exception.OutOfRangeException;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.FileInputStream;

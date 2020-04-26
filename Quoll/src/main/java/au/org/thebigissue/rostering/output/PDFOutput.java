@@ -2,32 +2,23 @@ package au.org.thebigissue.rostering.output;
 
 
 import au.org.thebigissue.rostering.gui.Controller;
-import au.org.thebigissue.rostering.solver.entities.FacilitatorShift;
-import au.org.thebigissue.rostering.solver.entities.GuestSpeakerShift;
 import au.org.thebigissue.rostering.solver.entities.Shift;
 import au.org.thebigissue.rostering.solver.entities.Workshop;
-import au.org.thebigissue.rostering.solver.solution.Roster;
 import be.quodlibet.boxable.BaseTable;
 import be.quodlibet.boxable.Cell;
 import be.quodlibet.boxable.Row;
-import be.quodlibet.boxable.utils.PDStreamUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.PDPageTree;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
-import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
-import org.jsoup.Connection;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 
 public class PDFOutput {
@@ -50,7 +41,7 @@ public class PDFOutput {
      * @throws IOException
      */
     public static void printGeneralRoster(List<Workshop> workshopList) throws IOException {
-        String text = "TBIC GUEST SPEAKER ROSTER";
+        String text = "BIGISSUE ROSTER";
         saveWorkshopsToPDF(null, workshopList, text, directory);
     }
 

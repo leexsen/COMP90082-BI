@@ -1,27 +1,17 @@
 package au.org.thebigissue.rostering.input;
 
-import au.org.thebigissue.rostering.errors.ImporterException;
-import au.org.thebigissue.rostering.output.ExcelOutput;
 import au.org.thebigissue.rostering.solver.entities.FacilitatorShift;
 import au.org.thebigissue.rostering.solver.entities.GuestSpeakerShift;
 import au.org.thebigissue.rostering.solver.entities.Workshop;
 import au.org.thebigissue.rostering.solver.solution.Roster;
-import au.org.thebigissue.rostering.solver.variables.*;
-import org.apache.poi.ss.usermodel.*;
+import au.org.thebigissue.rostering.solver.variables.Staff;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 //Code by Robert Sharp (186477) and Andre Simmonds

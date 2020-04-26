@@ -6,7 +6,6 @@ import au.org.thebigissue.rostering.input.RosteringImporter;
 import au.org.thebigissue.rostering.output.ExcelOutput;
 import au.org.thebigissue.rostering.output.PDFOutput;
 import au.org.thebigissue.rostering.output.WordOutput;
-import au.org.thebigissue.rostering.solver.entities.Shift;
 import au.org.thebigissue.rostering.solver.solution.Roster;
 import javafx.application.Platform;
 import javafx.scene.control.ListView;
@@ -24,11 +23,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Contains the main function for the standalone rostering application.
