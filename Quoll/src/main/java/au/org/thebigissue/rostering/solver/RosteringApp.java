@@ -6,6 +6,7 @@ import au.org.thebigissue.rostering.input.RosteringImporter;
 import au.org.thebigissue.rostering.output.ExcelOutput;
 import au.org.thebigissue.rostering.output.PDFOutput;
 import au.org.thebigissue.rostering.output.WordOutput;
+import au.org.thebigissue.rostering.solver.entities.Shift;
 import au.org.thebigissue.rostering.solver.solution.Roster;
 import javafx.application.Platform;
 import javafx.scene.control.ListView;
@@ -115,14 +116,9 @@ public class RosteringApp {
 
         //Create the PDF
         if (PDFSetting) {
-
-            PDFOutput.printGeneralRoster(solvedRoster);
-
-            PDFOutput.printRosterFacilitator(solvedRoster);
-
-            PDFOutput.printGuestSpeakerShiftAndWorkshopsForAll(solvedRoster);
-
-
+            PDFOutput.printGeneralRoster(solvedRoster.getWorkshopList());
+            PDFOutput.printShiftAndWorkshops(solvedRoster.getFacilitatorShiftList(), true);
+            PDFOutput.printShiftAndWorkshops(solvedRoster.getGuestSpeakerShiftList(), false);
         }
 
         //Create the director in a try block to avoid memory leaks
