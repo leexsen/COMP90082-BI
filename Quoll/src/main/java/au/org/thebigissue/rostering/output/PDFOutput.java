@@ -178,7 +178,7 @@ public class PDFOutput {
             BaseTable table = (BaseTable)pdfTable;
 
             Row<PDPage> headerRow = table.createRow(15f);
-            Cell<PDPage> cell = headerRow.createCell(14, "Guest Name");
+            Cell<PDPage> cell = headerRow.createCell(14, "Name");
             cell.setFontSize(16);
 
             cell = headerRow.createCell(14, "Day");
