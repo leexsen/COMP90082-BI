@@ -324,22 +324,20 @@ public class Workshop extends AbstractPersistable {
         String endTime = endDateTime.toLocalTime().toString();
 
         result.add(date);
-        result.add(startTime + " - " +
-                endTime);
+        result.add(startTime + " - " + endTime);
         result.add(school);
         result.add(course);
         result.add(location);
-        if (facilitatorShift!=null) {
-            result.add(facilitatorShift.getStaffName());
-        }else {
-            result.add("default facilitator");
-        }
 
-        if (guestSpeakerShift!=null){
+        if (facilitatorShift != null)
+            result.add(facilitatorShift.getStaffName());
+        else
+            result.add("default facilitator");
+
+        if (guestSpeakerShift != null)
             result.add(guestSpeakerShift.getStaffName());
-        }else {
+        else
             result.add("default guestSpeaker");
-        }
 
         return result;
     }

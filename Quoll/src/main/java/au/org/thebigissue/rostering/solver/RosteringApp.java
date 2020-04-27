@@ -23,11 +23,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Contains the main function for the standalone rostering application.
@@ -115,14 +111,9 @@ public class RosteringApp {
 
         //Create the PDF
         if (PDFSetting) {
-
-            PDFOutput.printGeneralRoster(solvedRoster);
-
-            PDFOutput.printRosterFacilitator(solvedRoster);
-
-            PDFOutput.printGuestSpeakerShiftAndWorkshopsForAll(solvedRoster);
-
-
+            PDFOutput.printGeneralRoster(solvedRoster.getWorkshopList());
+            PDFOutput.printShiftAndWorkshops(solvedRoster.getFacilitatorShiftList(), true);
+            PDFOutput.printShiftAndWorkshops(solvedRoster.getGuestSpeakerShiftList(), false);
         }
 
         //Create the director in a try block to avoid memory leaks

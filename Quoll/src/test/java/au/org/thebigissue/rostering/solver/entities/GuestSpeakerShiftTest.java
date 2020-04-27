@@ -1,18 +1,5 @@
 package au.org.thebigissue.rostering.solver.entities;
 
-import au.org.thebigissue.rostering.solver.variables.Availability;
-import au.org.thebigissue.rostering.solver.variables.GuestSpeaker;
-import org.junit.Before;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 class GuestSpeakerShiftTest {
 
     GuestSpeakerShift guestSpeakerShift;

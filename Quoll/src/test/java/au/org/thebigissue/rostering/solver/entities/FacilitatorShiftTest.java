@@ -1,16 +1,5 @@
 package au.org.thebigissue.rostering.solver.entities;
 
-import au.org.thebigissue.rostering.solver.variables.Availability;
-import au.org.thebigissue.rostering.solver.variables.Facilitator;
-import au.org.thebigissue.rostering.solver.variables.Staff;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import java.time.LocalDate;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 class FacilitatorShiftTest {
 
     FacilitatorShift facilitatorShift;

@@ -19,8 +19,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.File;
 
 /**Code that creates all the Buttons, header tabs etc. for the GUI

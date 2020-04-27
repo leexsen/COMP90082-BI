@@ -1,6 +1,5 @@
 package au.org.thebigissue.rostering.gui;
 
-import javafx.application.Platform;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
 import javafx.stage.Stage;
@@ -8,7 +7,6 @@ import javafx.stage.Stage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
 
 /**This code is largely taken from online tutorials
  * It captures the System.out.println and updates the console

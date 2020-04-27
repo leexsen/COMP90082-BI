@@ -2,8 +2,6 @@ package au.org.thebigissue.rostering.solver.entities;
 
 import au.org.thebigissue.rostering.output.PDFOutput;
 import au.org.thebigissue.rostering.solver.AbstractPersistable;
-import au.org.thebigissue.rostering.solver.variables.Facilitator;
-import au.org.thebigissue.rostering.solver.variables.GuestSpeaker;
 import au.org.thebigissue.rostering.solver.variables.Staff;
 
 import java.io.IOException;
@@ -243,23 +241,21 @@ public abstract class Shift extends AbstractPersistable {
         String startTime = shiftStart.toLocalTime().toString();
         String endTime = shiftEnd.toLocalTime().toString();
 
-        System.out.println("\n");
+        //System.out.println("\n");
 
-        String facilitatorShiftTitle=String.format("%-10s%-18s%-17s",staff.getName(), dateString, startTime + " - " +
-                endTime);
+        String facilitatorShiftTitle = String.format("%-10s%-18s%-17s",staff.getName(), dateString, startTime + " - " + endTime);
 
         // print the heading for the shift, including start and end time
-        System.out.format("%-10s%-18s%-17s%s", staff.getName(), dateString, startTime + " - " +
-                endTime, "\n");
+        //System.out.format("%-10s%-18s%-17s%s", staff.getName(), dateString, startTime + " - " + endTime, "\n");
 
         // print the workshops within the shift
-        System.out.println("---------------------------------------------------");
-        for (Workshop workshop : workshopList) {
-            workshop.printWorkshop();
-        }
+        //System.out.println("---------------------------------------------------");
+        //for (Workshop workshop : workshopList) {
+        //    workshop.printWorkshop();
+        //}
 
         try {
-            PDFOutput.printForSpecifiedRolesProcedure(workshopList,facilitatorShiftTitle,saveDirectory);
+            PDFOutput.printForSpecifiedRolesProcedure(workshopList, facilitatorShiftTitle, saveDirectory);
         } catch (IOException e) {
             e.printStackTrace();
         }

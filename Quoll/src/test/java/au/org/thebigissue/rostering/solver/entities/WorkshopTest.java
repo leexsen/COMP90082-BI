@@ -1,14 +1,5 @@
 package au.org.thebigissue.rostering.solver.entities;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.ArrayList;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 class WorkshopTest {
 
     Workshop workshop;
