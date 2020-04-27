@@ -9,6 +9,7 @@ package au.org.thebigissue.rostering.gui;
 
 import au.org.thebigissue.rostering.errors.ImporterException;
 import au.org.thebigissue.rostering.errors.InfeasibleException;
+import au.org.thebigissue.rostering.errors.InvalidDataException;
 import au.org.thebigissue.rostering.solver.RosteringApp;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
@@ -656,6 +657,19 @@ public class Controller {
 
     }
 
+    // creates an alert if the data format in the input excel file is invalid
+    private void invalidDataFormatAlert(Exception e) {
+
+        String message = e.getMessage();
+
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Invalid data format!");
+        alert.setHeaderText(message.substring(0, message.indexOf("|")));
+        alert.setContentText(message.substring(message.indexOf("|")+1));
+        alert.showAndWait();
+
+    }
+
     /**MyWatchCallable
      * This callable will watch the other callable and terminate it if it has gone on too long
      */
@@ -826,6 +840,15 @@ public class Controller {
 
                 return false;
 
+            }
+
+            catch (InvalidDataException e) {
+
+                Platform.runLater(() -> controller.invalidDataFormatAlert(e));
+
+                enableRosterButton();
+
+                return false;
             }
 
             catch (NullPointerException e) {

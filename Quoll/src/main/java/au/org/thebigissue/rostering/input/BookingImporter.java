@@ -1,9 +1,12 @@
 package au.org.thebigissue.rostering.input;
 
+import au.org.thebigissue.rostering.errors.InvalidDataException;
 import au.org.thebigissue.rostering.solver.entities.FacilitatorShift;
 import au.org.thebigissue.rostering.solver.entities.GuestSpeakerShift;
 import au.org.thebigissue.rostering.solver.entities.Workshop;
 import au.org.thebigissue.rostering.solver.solution.Roster;
+import javafx.application.Platform;
+import javafx.scene.control.Alert;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -79,6 +82,7 @@ enum BookingColumnIndex {
 }
 
 public class BookingImporter {
+    private final String TIME_REGEX = "(1[012]|[1-9])(.[0-5][0-9])?(am|pm)";
     private final String JAN_SHEET_NAME = "MJan";
     private final String FEB_SHEET_NAME = "MFeb";
     private final String MAR_SHEET_NAME = "MMar";
@@ -133,6 +137,12 @@ public class BookingImporter {
                 if (isEmptyRow(row))
                     break;
 
+                // skip over rows that has no workshop
+                if (getLocationIndex(row) == -1)
+                    continue;
+
+                checkDataFormat(row, sheet);
+
                 // get day of the workshop
                 if (day == -1 || !formatter.formatCellValue(row.getCell(BookingColumnIndex.DATE.getValue())).equals("")) {
                     day = (int) row.getCell(BookingColumnIndex.DATE.getValue()).getNumericCellValue();
@@ -142,10 +152,6 @@ public class BookingImporter {
 
                 // only add workshops if they are within specified roster dates
                 if (date.isBefore(rosterStartDate) || date.isAfter(rosterEndDate))
-                    continue;
-
-                // skip over rows that has no workshop
-                if (getLocationIndex(row) == -1)
                     continue;
 
                 //import data of the workshop
@@ -239,7 +245,7 @@ public class BookingImporter {
             if (formatter.formatCellValue(row.getCell(i)).equals("1")) {
                 course = BookingColumnIndex.of(i).getDisplayName();
             }
-        }
+    }
 
         return course;
     }
@@ -319,5 +325,25 @@ public class BookingImporter {
                 return false;
         }
         return true;
+    }
+
+    // check the data format of the row is valid
+    private void checkDataFormat(Row row, Sheet sheet) {
+
+        int rowNum = row.getRowNum()+1;
+        String sheetName = sheet.getSheetName();
+        String timeString = formatter.formatCellValue(row.getCell(getLocationIndex(row)));
+
+        // checks the time format
+        if (!timeString.matches(TIME_REGEX)) {
+            throw new InvalidDataException("The data format is invalid in row " + rowNum + " in the worksheet " + "'" + sheetName
+                    + "'|" + "Check the time format and manually adjust it in the excel file");
+        }
+
+        // checks that a workshop type is selected
+        if (getCourse(row) == null) {
+            throw new InvalidDataException("The data format is invalid in row " + rowNum + " in the worksheet " + "'" + sheetName
+                    + "'|" + "Check that a workshop type is selected with a '1' and manually adjust it in the excel file");
+        }
     }
 }
