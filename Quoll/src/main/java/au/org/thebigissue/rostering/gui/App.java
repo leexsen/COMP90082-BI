@@ -458,7 +458,7 @@ public class App extends Application {
         Text timeSettingLabel = new Text("Time setting:");
 
         // Time options
-        String options[] = controller.getComboOptions();
+        String[] options = controller.getComboOptions();
 
         // Create a combo box
         ComboBox<String> comboBox = new ComboBox<>(FXCollections.observableArrayList(options));
@@ -466,7 +466,7 @@ public class App extends Application {
         comboBox.setOnAction(e -> {
             //timeSetting=(String)comboBox.getValue();
             //controller.setTimeSetting(Integer.parseInt((String)comboBox.getValue()));
-            controller.setTimeSetting((String)comboBox.getValue());
+            controller.setTimeSetting(comboBox.getValue());
         });
 
         //comboBox.getSelectionModel().select(timeSetting);

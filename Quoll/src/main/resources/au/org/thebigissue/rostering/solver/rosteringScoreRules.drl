@@ -225,24 +225,24 @@ rule "Max 3 workshops in a row without break - facilitator"
         scoreHolder.addSoftConstraintMatch(kcontext, -200);
 end
 
-/*
-rule "Facilitator - avoid single-workshop shifts, unless office staff"
+
+rule "Avoid single-workshop shifts for casual facilitators - facilitator"
     when
         $workshop : Workshop($facilitatorShift : facilitatorShift)
-        FacilitatorShift(this == $facilitatorShift, getNumWorkshops() == 1, !staff.isOfficeStaff())
+        FacilitatorShift(this == $facilitatorShift, getNumWorkshops() == 1, staff.isCasualStaff())
     then
         scoreHolder.addSoftConstraintMatch(kcontext, -1); // changed to -1. if too big it creates a score trap.
 end
 
 
-rule "Allocate office staff only when really necessary"
+rule "Allocate casual facilitators only when really necessary - facilitator"
     when
         $workshop : Workshop($facilitatorShift : facilitatorShift)
-        FacilitatorShift(this == $facilitatorShift, staff.isOfficeStaff())
+        FacilitatorShift(this == $facilitatorShift, staff.isCasualStaff())
     then
         scoreHolder.addSoftConstraintMatch(kcontext, -100);
 end
-*/
+
 
 /* REMOVED, as the ValueRangeProvider in Workshop.java should now only provide shifts on the same date; more efficient
 

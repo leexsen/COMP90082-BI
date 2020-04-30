@@ -2,16 +2,16 @@ package au.org.thebigissue.rostering.solver.variables;
 
 public class Facilitator extends Staff {
 
-    private boolean isOfficeStaff = false;
+    private boolean isCasualStaff = false;
 
     public Facilitator(String firstName, String lastName, Availability availability, int maxSessions, String[] trained) {
         super(firstName, lastName, availability, maxSessions, trained);
     }
 
-    public Facilitator(String firstName, String lastName, Availability availability, int maxSessions, String[] trained, boolean isOfficeStaff) {
+    public Facilitator(String firstName, String lastName, Availability availability, int maxSessions, String[] trained, boolean isCasualStaff) {
         super(firstName, lastName, availability, maxSessions, trained);
 
-        this.isOfficeStaff = isOfficeStaff;
+        this.isCasualStaff = isCasualStaff;
     }
 
 
@@ -20,5 +20,5 @@ public class Facilitator extends Staff {
         return super.isTrained(courseName);
     }
 
-    public boolean isOfficeStaff() { return isOfficeStaff;}
+    public boolean isCasualStaff() { return isCasualStaff;}
 }

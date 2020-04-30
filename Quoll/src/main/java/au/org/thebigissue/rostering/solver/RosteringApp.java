@@ -53,10 +53,10 @@ public class RosteringApp {
         //Capture the output
         PrintStream printStream = new PrintStream(new ConsoleUpdater(console, primaryStage, progressBar, timeSetting));
 
-        if (StandardSetting == true) {
+        if (StandardSetting) {
             System.setOut(printStream);
         }
-        if (ErrorSetting == true) {
+        if (ErrorSetting) {
             System.setErr(printStream);
         }
 

@@ -1,5 +1,6 @@
 package au.org.thebigissue.rostering.input;
 
+import au.org.thebigissue.rostering.errors.ImporterException;
 import au.org.thebigissue.rostering.solver.variables.Availability;
 import au.org.thebigissue.rostering.solver.variables.Facilitator;
 import au.org.thebigissue.rostering.solver.variables.GuestSpeaker;
@@ -17,32 +18,33 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 
 enum ColumnIndex {
-    NAME(0, null),
-    STAFF_CODE(1, null),
-    MAX_SESSIONS(2, null),
-    MON_AM(3, null),
-    MON_PM(4, null),
-    TUE_AM(5, null),
-    TUE_PM(6, null),
-    WED_AM(7, null),
-    WED_PM(8, null),
-    THU_AM(9, null),
-    THU_PM(10, null),
-    FRI_AM(11, null),
-    FRI_PM(12, null),
-    P123(13, "P123"),
-    P456(14, "P456"),
-    DHD(15, "DHD"),
-    HHI(16, "HHI"),
-    CSE(17, "CSE"),
-    PE(18, "Pe"),
-    DHDE(19, "DHDe"),
-    DADE(20, "DADe"),
-    HHIE(21, "HHIe"),
-    CSEE(22, "CSEe"),
-    TBIDEA(23, "TBIdea"),
-    AH(24, "Ah"),
-    C(25, "C");
+    NAME(0, "Name"),
+    STAFF_CODE(1, "Staff code"),
+    CASUAL_STAFF(2, "Casual staff"),
+    MAX_SESSIONS(3, "Max w/s"),
+    MON_AM(4, "Mon am"),
+    MON_PM(5, "Mon pm"),
+    TUE_AM(6, "Tue am"),
+    TUE_PM(7, "Tue pm"),
+    WED_AM(8, "Wed am"),
+    WED_PM(9, "Wed pm"),
+    THU_AM(10, "Thu am"),
+    THU_PM(11, "Thu pm"),
+    FRI_AM(12, "Fri am"),
+    FRI_PM(13, "Fri pm"),
+    P123(14, "P123"),
+    P456(15, "P456"),
+    DHD(16, "DHD"),
+    HHI(17, "HHI"),
+    CSE(18, "CSE"),
+    PE(19, "Pe"),
+    DHDE(20, "DHDe"),
+    DADE(21, "DADe"),
+    HHIE(22, "HHIe"),
+    CSEE(23, "CSEe"),
+    TBIDEA(24, "TBIdea"),
+    AH(25, "Ah"),
+    C(26, "C");
 
     private static final ColumnIndex[] ENUMS = ColumnIndex.values();
 
@@ -101,6 +103,27 @@ public class AvailabilityImporter {
             }
         }
         workbook.close();
+        checkFormat();
+    }
+
+    public void checkFormat() {
+        Row headings = availabilitySheet.getRow(0);
+
+        for (int i = ColumnIndex.NAME.getValue(); i < ColumnIndex.C.getValue(); i++) {
+            try {
+                String title1 = headings.getCell(i).getStringCellValue().strip().toLowerCase();
+                String title2 = ColumnIndex.of(i).getDisplayName().strip().toLowerCase();
+
+                if (!title2.equals(title1)) {
+                    throw new ImporterException("The column \"" + title2 + "\" is missing in the master availability sheet" +
+                            " or the order of the columns in that sheet is incorrect");
+                }
+
+            } catch (NullPointerException e) {
+                throw new ImporterException("The format or the order of the columns in the master availability sheet" +
+                        " is incorrect, or some columns are missing");
+            }
+        }
     }
 
     public ArrayList<Staff> getFacilitatorList() {
@@ -111,7 +134,7 @@ public class AvailabilityImporter {
         return guestspeakerList;
     }
 
-    public void importAvailability(LocalDate rosterStartDate) {
+    public void importAvailability() {
         for (Row row : availabilitySheet) {
 
             // skip the first row -- heading
@@ -127,10 +150,11 @@ public class AvailabilityImporter {
             String[] trainedCourses = readTrainedCourses(row);
             String firstName = row.getCell(ColumnIndex.NAME.getValue()).getStringCellValue();
             String staffCode = row.getCell(ColumnIndex.STAFF_CODE.getValue()).getStringCellValue();
+            boolean isCasualStaff = row.getCell(ColumnIndex.CASUAL_STAFF.getValue()).getStringCellValue().equals(TRUE);
             int maxSessions = (int) row.getCell(ColumnIndex.MAX_SESSIONS.getValue()).getNumericCellValue();
 
             if (staffCode.equals(FACILITATOR_CODE))
-                facilitatorList.add(new Facilitator(firstName, "", availability, maxSessions, trainedCourses));
+                facilitatorList.add(new Facilitator(firstName, "", availability, maxSessions, trainedCourses, isCasualStaff));
             else if (staffCode.equals(GUESTSPEAKER_CODE))
                 guestspeakerList.add(new GuestSpeaker(firstName, "", availability, maxSessions, trainedCourses, 2));
         }

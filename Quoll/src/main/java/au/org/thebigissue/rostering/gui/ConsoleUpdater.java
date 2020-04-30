@@ -7,6 +7,7 @@ import javafx.stage.Stage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 
 /**This code is largely taken from online tutorials
  * It captures the System.out.println and updates the console
@@ -46,7 +47,7 @@ public class ConsoleUpdater extends OutputStream {
 
     //Source: https://stackoverflow.com/questions/48589410/replicating-console-functionality-with-a-listview
     private void addText() throws IOException {
-        String text = buffer.toString("UTF-8");
+        String text = buffer.toString(StandardCharsets.UTF_8);
 
         buffer.reset();
 

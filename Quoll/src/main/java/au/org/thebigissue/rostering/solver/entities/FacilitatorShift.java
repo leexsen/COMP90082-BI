@@ -27,7 +27,7 @@ public class FacilitatorShift extends Shift {
     }
 
     public FacilitatorShift(long id, Facilitator staff, LocalDate date, Roster roster) {
-        super(id, (Staff) staff, date);
+        super(id, staff, date);
         this.roster = roster;
     }
 

@@ -446,11 +446,7 @@ public class Workshop extends AbstractPersistable {
         DateTimeFormatter dayFormatter = DateTimeFormatter.ofPattern("eee", new Locale("en_AU"));
         String day = startDateTime.toLocalDate().format(dayFormatter);
 
-        if (day.equals(targetDay))
-        {
-        return true;}
-
-        else {return false;}
+        return day.equals(targetDay);
 
     }
 
@@ -459,11 +455,7 @@ public class Workshop extends AbstractPersistable {
         String name1 = facilitatorShift.getStaffName();
         String name2 = guestSpeakerShift.getStaffName();
 
-        if ((name1.equals(targetName))||(name2.equals(targetName))) {
-            return true;
-        }
-
-        return false;
+        return (name1.equals(targetName)) || (name2.equals(targetName));
     }
 
     public boolean isDate(String targetDate) {
@@ -471,11 +463,7 @@ public class Workshop extends AbstractPersistable {
         DateTimeFormatter dayFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy", new Locale("en_AU"));
         String date = startDateTime.toLocalDate().format(dayFormatter);
 
-        if (date.equals(targetDate))
-        {
-            return true;}
-
-        else {return false;}
+        return date.equals(targetDate);
 
     }
 

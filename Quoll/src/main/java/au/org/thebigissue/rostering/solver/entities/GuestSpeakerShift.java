@@ -25,7 +25,7 @@ public class GuestSpeakerShift extends Shift {
     }
 
     public GuestSpeakerShift(long id, GuestSpeaker staff, LocalDate date, Roster roster) {
-        super(id, (Staff) staff, date);
+        super(id, staff, date);
         this.roster = roster;
     }
 

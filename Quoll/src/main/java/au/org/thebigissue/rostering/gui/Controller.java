@@ -207,8 +207,7 @@ public class Controller {
     public boolean processSetting(String settingTemp) {
 
         if (!(settingTemp.equals("null"))) {
-            if (settingTemp.equals("true")) {return(true);
-            } else {return(false);}
+            return settingTemp.equals("true");
         }
 
         else {
@@ -326,13 +325,7 @@ public class Controller {
 
     private boolean isEmpty(String path) {
 
-        if (path.equals("")) {
-
-            return true;
-
-        }
-
-        return false;
+        return path.equals("");
     }
 
     /**errorWord
@@ -509,7 +502,7 @@ public class Controller {
 
         try {
 
-            PrintWriter writer = new PrintWriter(configFileName, "UTF-8");
+            PrintWriter writer = new PrintWriter(configFileName, StandardCharsets.UTF_8);
 
             for (int i = 1; i<=CONFIGLINES; i++) {
                 writer.println("null");
@@ -538,7 +531,7 @@ public class Controller {
         //Save the default values
         try {
 
-            PrintWriter writer = new PrintWriter(configFileName, "UTF-8");
+            PrintWriter writer = new PrintWriter(configFileName, StandardCharsets.UTF_8);
 
             writer.println(inputExcelPath);
 
@@ -927,7 +920,7 @@ public class Controller {
         }
 
         //Check if at least one output is selected
-        if ((getExcelSetting()==false) && (getWordSetting()==false) && (getPDFSetting()==false)) {
+        if ((!getExcelSetting()) && (!getWordSetting()) && (!getPDFSetting())) {
 
             noOutputSelected();
             canRoster = false;

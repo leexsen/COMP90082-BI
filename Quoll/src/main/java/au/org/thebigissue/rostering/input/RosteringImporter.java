@@ -219,7 +219,7 @@ public class RosteringImporter {
         year = rosterStartDate.getYear();
 
         AvailabilityImporter availabilityImporter = new AvailabilityImporter(excelFile);
-        availabilityImporter.importAvailability(rosterStartDate);
+        availabilityImporter.importAvailability();
 
         ArrayList<Staff> facilitators = availabilityImporter.getFacilitatorList();
         ArrayList<Staff> guestSpeakers = availabilityImporter.getGuestspeakerList();

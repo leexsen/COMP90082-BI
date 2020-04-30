@@ -17,12 +17,5 @@ public class  GuestSpeaker extends Staff {
         return super.isTrained(courseName);
     }
 
-    public boolean isDummy() {
-        if (firstName.equals("None")) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
+    public boolean isDummy() { return firstName.equals("None"); }
 }

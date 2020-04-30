@@ -5,8 +5,6 @@ import au.org.thebigissue.rostering.solver.entities.FacilitatorShift;
 import au.org.thebigissue.rostering.solver.entities.GuestSpeakerShift;
 import au.org.thebigissue.rostering.solver.entities.Workshop;
 import au.org.thebigissue.rostering.solver.solution.Roster;
-import javafx.application.Platform;
-import javafx.scene.control.Alert;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 

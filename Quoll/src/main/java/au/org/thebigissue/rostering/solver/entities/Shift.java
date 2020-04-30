@@ -342,9 +342,7 @@ public abstract class Shift extends AbstractPersistable {
             return false;
         }
         if(((Shift)obj).getDate() == this.getDate()){
-            if(((Shift)obj).getStaffName().equals(this.getStaffName())){
-                return true;
-            }
+            return ((Shift) obj).getStaffName().equals(this.getStaffName());
         }
         return false;
     }
@@ -359,10 +357,7 @@ public abstract class Shift extends AbstractPersistable {
                 lastShiftTime = startTime;
             }
         }
-        if (lastShiftTime.equals(workshop1.getStartDateTime())) {
-            return true;
-        }
-        return false;
+        return lastShiftTime.equals(workshop1.getStartDateTime());
 
     }
 }
