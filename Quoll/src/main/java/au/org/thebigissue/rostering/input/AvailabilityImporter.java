@@ -109,7 +109,7 @@ public class AvailabilityImporter {
     public void checkFormat() {
         Row headings = availabilitySheet.getRow(0);
 
-        for (int i = ColumnIndex.NAME.getValue(); i < ColumnIndex.C.getValue(); i++) {
+        for (int i = ColumnIndex.NAME.getValue(); i <= ColumnIndex.C.getValue(); i++) {
             try {
                 String title1 = headings.getCell(i).getStringCellValue().strip().toLowerCase();
                 String title2 = ColumnIndex.of(i).getDisplayName().strip().toLowerCase();
