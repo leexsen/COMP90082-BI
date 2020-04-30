@@ -109,7 +109,7 @@ rule "Back-to-back workshops with different location (Guest Speaker)"
     when
         $workshop1 : Workshop($workshop1EndTime : endDateTime, $location : location, $shift : guestSpeakerShift)
 
-        // check that workshop 2 has same facilitator, different location and starts within 30 min after the end of workshop 1
+        // check that workshop 2 has same guest speaker, different location and starts within 30 min after the end of workshop 1
         $workshop2 : Workshop($shift == guestSpeakerShift, !($location.equals(location)), $workshop2EndTime : endDateTime, !($workshop1EndTime.isAfter(startDateTime)), $workshop1EndTime.plusMinutes(30).isAfter(startDateTime))
     then
         scoreHolder.addHardConstraintMatch(kcontext, -1);
@@ -156,7 +156,6 @@ end
 // A facilitator can attend a maximum of $maxSession workshops per week
 rule "Facilitator: max $maxSession(defineded in the Execl file) workshops per week"
     when
-        //FacilitatorShift($num : getNumWorkshops() > $maxSessions : maxSessions)
         FacilitatorShift($num : getNumWorkshopsPerWeek() > $maxSessions : maxSessions)
     then
         scoreHolder.addHardConstraintMatch(kcontext, -(2 ^ ($num - $maxSessions)) * 100);
@@ -173,25 +172,6 @@ end
 // ############################################################################
 // Soft constraints
 // ############################################################################
-
-
-/* Moved to hard constraint
-// A facilitator can attend a maximum of $maxSession workshops per day
-rule "Facilitator: max $maxSession(defineded in the Execl file) workshops per day"
-    when
-        FacilitatorShift($num : getNumWorkshops() > $maxSessions : maxSessions)
-    then
-        scoreHolder.addSoftConstraintMatch(kcontext, -(2 ^ ($num - $maxSessions)) * 100);
-end
-
-// A guest speaker can only attend a maximum of $maxSession workshops per day
-rule "Guest speaker: max $maxSession(defineded in the Execl file) workshops per day"
-    when
-        GuestSpeakerShift($num : getNumWorkshops() > $maxSessions : maxSessions)
-    then
-        scoreHolder.addSoftConstraintMatch(kcontext, -(2 ^ ($num - $maxSessions)) * 200);
-end
-*/
 
 // Maximise the utilisation of staff (time spent in workshops / total shift time)
 rule "Maximise utilisation - facilitator"
@@ -228,7 +208,7 @@ rule "Guest speaker ordering by reliability"
 end
 */
 
-rule "Max 3 workshops in a row without break"
+rule "Max 3 workshops in a row without break - facilitator"
     when
         $workshop1 : Workshop($workshop1EndTime : endDateTime, $shift : facilitatorShift)
 
