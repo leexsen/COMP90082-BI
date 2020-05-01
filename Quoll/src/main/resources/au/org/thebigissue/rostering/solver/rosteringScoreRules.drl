@@ -137,20 +137,20 @@ rule "Back-to-back workshops - offsite locations (guest speakers)"
         scoreHolder.addHardConstraintMatch(kcontext, -1);
 end
 
-// A facilitator can attend a maximum of 3 workshops per day
-rule "Facilitator: max 3 workshops per day"
+// A facilitator can attend a maximum of 6 workshops per day
+rule "Facilitator: max 6 workshops per day"
     when
-        FacilitatorShift($num : getNumWorkshops() > 3)
+        FacilitatorShift($num : getNumWorkshops() > 6)
     then
-        scoreHolder.addHardConstraintMatch(kcontext, -(2 ^ ($num - 3)) * 100);
+        scoreHolder.addHardConstraintMatch(kcontext, -(2 ^ ($num - 6)) * 100);
 end
 
-// A guest speaker can only attend a maximum of 3 workshops per day
-rule "Guest speaker: max 3 workshops per day"
+// A guest speaker can only attend a maximum of 2 workshops per day
+rule "Guest speaker: max 2 workshops per day"
     when
-        GuestSpeakerShift($num : getNumWorkshops() > 3)
+        GuestSpeakerShift($num : getNumWorkshops() > 2)
     then
-        scoreHolder.addHardConstraintMatch(kcontext, -(2 ^ ($num - 3)) * 200);
+        scoreHolder.addHardConstraintMatch(kcontext, -(2 ^ ($num - 2)) * 200);
 end
 
 // A facilitator can attend a maximum of $maxSession workshops per week
@@ -240,7 +240,7 @@ rule "Allocate casual facilitators only when really necessary - facilitator"
         $workshop : Workshop($facilitatorShift : facilitatorShift)
         FacilitatorShift(this == $facilitatorShift, staff.isCasualStaff())
     then
-        scoreHolder.addSoftConstraintMatch(kcontext, -100);
+        scoreHolder.addSoftConstraintMatch(kcontext, -200);
 end
 
 
