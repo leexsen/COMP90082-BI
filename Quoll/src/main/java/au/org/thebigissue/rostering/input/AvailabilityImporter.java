@@ -1,11 +1,13 @@
 package au.org.thebigissue.rostering.input;
 
 import au.org.thebigissue.rostering.errors.ImporterException;
+import au.org.thebigissue.rostering.errors.InvalidDataException;
 import au.org.thebigissue.rostering.solver.variables.Availability;
 import au.org.thebigissue.rostering.solver.variables.Facilitator;
 import au.org.thebigissue.rostering.solver.variables.GuestSpeaker;
 import au.org.thebigissue.rostering.solver.variables.Staff;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -80,6 +82,9 @@ public class AvailabilityImporter {
     private final String AVAILABILITY_SHEET_NAME = "Master availability";
     private final String FACILITATOR_CODE = "F";
     private final String GUESTSPEAKER_CODE = "GS";
+    private final String INTEGER_REGEX = "^\\d+$";
+    private final String STAFF_CODE_REGEX = "(GS)|F";
+    private final String YES_AND_NO_REGEX = "Y|N";
 
     private final String TRUE = "Y";
     private final String FALSE = "N";
@@ -93,6 +98,8 @@ public class AvailabilityImporter {
 
     private ArrayList<Staff> facilitatorList = new ArrayList<>();
     private ArrayList<Staff> guestspeakerList = new ArrayList<>();
+
+    private DataFormatter formatter = new DataFormatter();
 
     public AvailabilityImporter(String execlFileName) throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook(new FileInputStream(execlFileName));
@@ -141,6 +148,8 @@ public class AvailabilityImporter {
             // skip the first row -- heading
             if (row.getRowNum() == 0)
                 continue;
+
+            checkDataFormat(row);
 
             Availability availability = readAvailability(row, amFromSetting, amToSetting, pmFromSetting, pmToSetting);
 
@@ -217,5 +226,41 @@ public class AvailabilityImporter {
         }
 
         return trainedCourses.toArray(String[]::new);
+    }
+
+    // check the data format of the row is valid
+    private void checkDataFormat(Row row) {
+
+        int rowNum = row.getRowNum()+1;
+
+        if (RosteringImporter.isEmptyRow(row))
+            return;
+
+        // checks the Staff code column
+        if (!formatter.formatCellValue(row.getCell(ColumnIndex.STAFF_CODE.getValue())).matches(STAFF_CODE_REGEX)) {
+            throw new InvalidDataException("The data format is invalid in row " + rowNum + " of the worksheet 'Master availability'"
+                    + "|Check the 'Staff code' column and manually adjust it in the excel file");
+        }
+
+        // checks the Casual Staff column
+        if (!formatter.formatCellValue(row.getCell(ColumnIndex.CASUAL_STAFF.getValue())).matches(YES_AND_NO_REGEX)) {
+            throw new InvalidDataException("The data format is invalid in row " + rowNum + " of the worksheet 'Master availability'"
+                    + "|Check the 'Casual Staff' column and manually adjust it in the excel file");
+        }
+
+        // checks the Max w/s column
+        if (!formatter.formatCellValue(row.getCell(ColumnIndex.MAX_SESSIONS.getValue())).matches(INTEGER_REGEX)) {
+            throw new InvalidDataException("The data format is invalid in row " + rowNum + " of the worksheet 'Master availability'"
+                    + "|Check the 'Max w/s' column and manually adjust it in the excel file");
+        }
+
+        // checks the availability columns
+        for (int i = ColumnIndex.MON_AM.getValue(); i <= ColumnIndex.C.getValue(); i++) {
+            if (!formatter.formatCellValue(row.getCell(i)).matches(YES_AND_NO_REGEX)) {
+                throw new InvalidDataException("The data format is invalid in row " + rowNum + " of the worksheet 'Master availability'"
+                        + "|Check the '" + ColumnIndex.of(i).getDisplayName() + "' column and manually adjust it in the excel file");
+            }
+        }
+
     }
 }

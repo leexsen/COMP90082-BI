@@ -135,7 +135,7 @@ public class BookingImporter {
                     continue;
 
                 // go to next sheet if row is empty
-                if (isEmptyRow(row))
+                if (RosteringImporter.isEmptyRow(row))
                     break;
 
                 // skip over rows that has no workshop
@@ -318,16 +318,6 @@ public class BookingImporter {
         return location;
     }
 
-    private boolean isEmptyRow(Row row) {
-        for (int i = row.getFirstCellNum(); i < row.getLastCellNum(); i++) {
-            Cell cell = row.getCell(i);
-
-            if (cell != null && cell.getCellTypeEnum() != CellType.BLANK)
-                return false;
-        }
-        return true;
-    }
-
     // check the data format of the row is valid
     private void checkDataFormat(Row row, Sheet sheet) {
 
@@ -337,13 +327,13 @@ public class BookingImporter {
 
         // checks the time format
         if (!timeString.matches(TIME_REGEX)) {
-            throw new InvalidDataException("The data format is invalid in row " + rowNum + " in the worksheet " + "'" + sheetName
+            throw new InvalidDataException("The data format is invalid in row " + rowNum + " of the worksheet " + "'" + sheetName
                     + "'|" + "Check the time format and manually adjust it in the excel file");
         }
 
         // checks that a workshop type is selected
         if (getCourse(row) == null) {
-            throw new InvalidDataException("The data format is invalid in row " + rowNum + " in the worksheet " + "'" + sheetName
+            throw new InvalidDataException("The data format is invalid in row " + rowNum + " of the worksheet " + "'" + sheetName
                     + "'|" + "Check that a workshop type is selected with a '1' and manually adjust it in the excel file");
         }
     }
