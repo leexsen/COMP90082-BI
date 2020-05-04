@@ -203,7 +203,9 @@ public class RosteringImporter {
     }
 
 
-    public Roster createRoster(LocalDate rosterStartDate, LocalDate rosterEndDate, String excelFile) throws IOException {
+    public Roster createRoster(LocalDate rosterStartDate, LocalDate rosterEndDate, String excelFile,
+                               String amFromSetting, String amToSetting, String pmFromSetting,
+                               String pmToSetting) throws IOException {
 
         this.excelFile = excelFile;
 
@@ -219,7 +221,7 @@ public class RosteringImporter {
         year = rosterStartDate.getYear();
 
         AvailabilityImporter availabilityImporter = new AvailabilityImporter(excelFile);
-        availabilityImporter.importAvailability();
+        availabilityImporter.importAvailability(amFromSetting, amToSetting, pmFromSetting, pmToSetting);
 
         ArrayList<Staff> facilitators = availabilityImporter.getFacilitatorList();
         ArrayList<Staff> guestSpeakers = availabilityImporter.getGuestspeakerList();

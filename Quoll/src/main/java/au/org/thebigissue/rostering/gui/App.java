@@ -471,6 +471,41 @@ public class App extends Application {
 
         //comboBox.getSelectionModel().select(timeSetting);
 
+        //AM and PM Start and End options
+
+        Text amFromSettingLabel = new Text("AM Start:");
+        Text amToSettingLabel = new Text("AM End:");
+        Text pmFromSettingLabel = new Text("PM Start:");
+        Text pmToSettingLabel= new Text("PM End:");
+
+        String[] options2 = controller.getComboOptions2();
+
+        //create combo boxes
+        ComboBox<String> comboBox1 = new ComboBox<>(FXCollections.observableArrayList(options2));
+
+        comboBox1.setOnAction(e -> {
+            controller.setAmFromSetting(comboBox1.getValue());
+        });
+
+        ComboBox<String> comboBox2 = new ComboBox<>(FXCollections.observableArrayList(options2));
+
+        comboBox2.setOnAction(e -> {
+            controller.setAmToSetting(comboBox2.getValue());
+        });
+
+        ComboBox<String> comboBox3 = new ComboBox<>(FXCollections.observableArrayList(options2));
+
+        comboBox3.setOnAction(e -> {
+            controller.setPmFromSetting(comboBox3.getValue());
+        });
+
+        ComboBox<String> comboBox4 = new ComboBox<>(FXCollections.observableArrayList(options2));
+
+        comboBox4.setOnAction(e -> {
+            controller.setPmToSetting(comboBox4.getValue());
+        });
+
+
         GridPane gridAO = new GridPane();
         gridAO.setPadding(new Insets(10, 10, 10, 10));
         gridAO.setMinSize(100, 100);
@@ -481,12 +516,29 @@ public class App extends Application {
         gridAO.add(wordChooserButton, 1, 0);
         gridAO.add(customWordTemplateInfo, 2, 0);
         gridAO.add(timeSettingLabel, 0, 1);
+        gridAO.add(amFromSettingLabel, 0, 2);
+        gridAO.add(amToSettingLabel, 0, 3);
+        gridAO.add(pmFromSettingLabel, 0, 4);
+        gridAO.add(pmToSettingLabel, 0, 5);
+        
         gridAO.add(comboBox, 1, 1);
+        gridAO.add(comboBox1, 1, 2);
+        gridAO.add(comboBox2, 1, 3);
+        gridAO.add(comboBox3, 1, 4);
+        gridAO.add(comboBox4, 1, 5);
 
         gridAO.setAlignment(Pos.CENTER);
 
         gridAO.setHalignment(customWordTemplateLabel, HPos.RIGHT);
         gridAO.setHalignment(timeSettingLabel, HPos.RIGHT);
+        gridAO.setHalignment(amFromSettingLabel, HPos.RIGHT);
+        gridAO.setHalignment(amToSettingLabel, HPos.RIGHT);
+        gridAO.setHalignment(pmFromSettingLabel, HPos.RIGHT);
+        gridAO.setHalignment(pmToSettingLabel, HPos.RIGHT);
+
+
+
+
 
         //Output options here
         //advancedOptionsVBox.getChildren().addAll(separatorAO1, gridAO, checkboxHBoxOutput, separatorAO2, saveButton2, separatorAO3);
@@ -570,6 +622,10 @@ public class App extends Application {
 
         //comboBox.getSelectionModel().select(Integer.toString(controller.getTimeSetting()));
         comboBox.getSelectionModel().select(controller.getTimeSettingKey());
+        comboBox1.getSelectionModel().select(controller.getAmFromSetting());
+        comboBox2.getSelectionModel().select(controller.getAmToSetting());
+        comboBox3.getSelectionModel().select(controller.getPmFromSetting());
+        comboBox4.getSelectionModel().select(controller.getPmToSetting());
 
         //Show the GUI
         primaryStage.setScene(new Scene(root, GUI_WIDTH, GUI_HEIGHT));

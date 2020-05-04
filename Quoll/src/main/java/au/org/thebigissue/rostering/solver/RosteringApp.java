@@ -47,7 +47,8 @@ public class RosteringApp {
                               int timeSetting,
                               boolean PDFSetting, boolean WordSetting, boolean ExcelSetting,
                               boolean StandardSetting, boolean ErrorSetting,
-                              ListView<String> console, Stage primaryStage, ProgressBar progressBar)
+                              ListView<String> console, Stage primaryStage, ProgressBar progressBar,
+                              String amFromSetting, String amToSetting, String pmFromSetting, String pmToSetting)
             throws IOException, Exception {
 
         //Capture the output
@@ -82,7 +83,7 @@ public class RosteringApp {
         //Roster unsolvedRoster = new RosteringGenerator().createRoster();
 
         // Import the problem
-        Roster unsolvedRoster = new RosteringImporter().createRoster(startDate, endDate, excelFile);
+        Roster unsolvedRoster = new RosteringImporter().createRoster(startDate, endDate, excelFile, amFromSetting, amToSetting, pmFromSetting, pmToSetting);
 
         // Solve the problem
         Roster solvedRoster = solver.solve(unsolvedRoster);

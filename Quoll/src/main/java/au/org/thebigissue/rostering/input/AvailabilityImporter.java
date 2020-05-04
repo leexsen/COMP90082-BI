@@ -134,14 +134,15 @@ public class AvailabilityImporter {
         return guestspeakerList;
     }
 
-    public void importAvailability() {
+    public void importAvailability(String amFromSetting, String amToSetting, String pmFromSetting,
+                                   String pmToSetting) {
         for (Row row : availabilitySheet) {
 
             // skip the first row -- heading
             if (row.getRowNum() == 0)
                 continue;
 
-            Availability availability = readAvailability(row);
+            Availability availability = readAvailability(row, amFromSetting, amToSetting, pmFromSetting, pmToSetting);
 
             // skip this person if the person is unavailable for the whole week
             if (availability.unavailableAtAll())
@@ -160,7 +161,7 @@ public class AvailabilityImporter {
         }
     }
 
-    private Availability readAvailability(Row row) {
+    private Availability readAvailability(Row row, String amFromSetting, String amToSetting, String pmFromSetting, String pmToSetting) {
         Availability availability = new Availability();
 
         for (int i = ColumnIndex.MON_AM.getValue(); i <= ColumnIndex.FRI_AM.getValue(); i+=2) {
@@ -177,15 +178,15 @@ public class AvailabilityImporter {
             LocalTime availableUntil;
 
             if (available_am.equals(TRUE)) {
-                availableFrom = LocalTime.parse(DEFAULT_AM_START_TIME);
+                availableFrom = LocalTime.parse(amFromSetting);
                 if (available_pm.equals(TRUE))
-                    availableUntil = LocalTime.parse(DEFAULT_PM_END_TIME);
+                    availableUntil = LocalTime.parse(pmToSetting);
                 else
-                    availableUntil = LocalTime.parse(DEFAULT_AM_END_TIME);
+                    availableUntil = LocalTime.parse(amToSetting);
 
             } else if (available_pm.equals(TRUE)) {
-                availableFrom = LocalTime.parse(DEFAULT_PM_START_TIME);
-                availableUntil = LocalTime.parse(DEFAULT_PM_END_TIME);
+                availableFrom = LocalTime.parse(pmFromSetting);
+                availableUntil = LocalTime.parse(pmToSetting);
 
             } else
                 continue;

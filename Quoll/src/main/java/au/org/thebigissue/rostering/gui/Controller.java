@@ -59,6 +59,12 @@ public class Controller {
     private Button rosterButton;
     private int threadID = 0;
     private ExecutorService executor;
+    private String amFromSetting;
+    private String amToSetting;
+    private String pmFromSetting;
+    private String pmToSetting;
+
+
 
     private final double TIMEFACTOR = 2.0; //The factor max time is. So a factor of 2 means that threads
     //Will time out after they have executed for twice the time they should.
@@ -73,11 +79,20 @@ public class Controller {
     private final String[] options = { "5 sec", "10 sec", "15 sec", "30 sec",
             "45 sec", "60 sec", "120 sec", "5 min", "10 min", "15 min", "30 min","1 hour","2 hours"};
 
+    //These are the labels for the combo box for setting the AM for availability
+    private final String DEFAULT_AM_START_TIME = "08:00";
+    private final String DEFAULT_AM_END_TIME = "12:00";
+    private final String DEFAULT_PM_START_TIME = "12:00";
+    private final String DEFAULT_PM_END_TIME = "20:00";
+    private final String[] options2 = {"06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00",
+    "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00"};
+
+
     //This will map the labels for the combo box onto integer values
     private Map<String, Integer> timeDictionary = new HashMap<String, Integer>();
 
     //For number of blank lines to write to new config file
-    private int CONFIGLINES = 9;
+    private int CONFIGLINES = 13;
 
     /**stopExecutor
      * shuts down the executor. Without doing this, you can't close the the .jar on mac on exit
@@ -151,6 +166,14 @@ public class Controller {
     public String getCustomWordTemplatePath() {
         return customWordTemplatePath;
     }
+
+    public String getAmFromSetting() { return amFromSetting; }
+
+    public String getAmToSetting() { return amToSetting; }
+
+    public String getPmFromSetting() { return pmFromSetting; }
+
+    public String getPmToSetting() { return pmToSetting; }
 
     /**processDirectoryPath
      * This takes a String tempPath for a directory and checks if it exists and is a directory
@@ -269,6 +292,11 @@ public class Controller {
             String StandardSettingTemp = lines.get(7);
             String ErrorSettingTemp = lines.get(8);
 
+            String amFromSettingTemp = lines.get(9);
+            String amToSettingTemp = lines.get(10);
+            String pmFromSettingTemp = lines.get(11);
+            String pmToSettingTemp = lines.get(12);
+
             //Set the loaded information
             customWordTemplatePath = processFilePath(customWordTemplatePathTemp);
 
@@ -280,6 +308,23 @@ public class Controller {
             ExcelSetting = processSetting(ExcelSettingTemp);
             StandardSetting = processSetting(StandardSettingTemp);
             ErrorSetting = processSetting(ErrorSettingTemp);
+
+            if(!(amFromSettingTemp.equals("null"))) {
+                amFromSetting = amFromSettingTemp;
+            } else { setAmFromSetting(DEFAULT_AM_START_TIME);}
+
+            if(!(amToSettingTemp.equals("null"))) {
+                amToSetting = amToSettingTemp;
+            } else { setAmToSetting(DEFAULT_AM_END_TIME);}
+
+            if(!(pmFromSettingTemp.equals("null"))) {
+                pmFromSetting = pmFromSettingTemp;
+            } else { setPmFromSetting(DEFAULT_PM_START_TIME);}
+
+            if(!(pmToSettingTemp.equals("null"))) {
+                pmToSetting = pmToSettingTemp;
+            } else { setPmToSetting(DEFAULT_PM_END_TIME);}
+
 
             if (!(timeSettingTemp.equals("null"))) {
 
@@ -310,6 +355,13 @@ public class Controller {
 
         return (options);
 
+    }
+
+    //get am/ pm combo options
+    public String[] getComboOptions2() {
+
+        String[] options2 = this.options2;
+        return options2;
     }
 
 
@@ -459,6 +511,23 @@ public class Controller {
 
     }
 
+    public void setAmFromSetting(String amFromSetting){
+        this.amFromSetting = amFromSetting;
+    }
+
+    public void setAmToSetting(String amToSetting){
+        this.amToSetting = amToSetting;
+    }
+
+    public void setPmFromSetting(String pmFromSetting){
+        this.pmFromSetting = pmFromSetting;
+    }
+
+    public void setPmToSetting(String pmToSetting){
+        this.pmToSetting = pmToSetting;
+    }
+
+
     /*public void setTimeSetting(int timeSetting) {
 
         this.timeSetting = timeSetting;
@@ -547,6 +616,11 @@ public class Controller {
 
             writer.println(StandardSetting);
             writer.println(ErrorSetting);
+
+            writer.println(amFromSetting);
+            writer.println(amToSetting);
+            writer.println(pmFromSetting);
+            writer.println(pmToSetting);
 
             System.out.println("Configuration file saved");
 
@@ -803,7 +877,8 @@ public class Controller {
                 //System.out.println("Run: " + Thread.currentThread().getName());
 
                 RosteringApp.RunApp(startDate, endDate, inputExcelPath, outputDirectoryPath, customWordTemplatePath, timeSetting,
-                        PDFSetting, WordSetting, ExcelSetting, StandardSetting, ErrorSetting, console, primaryStage, progressBar);
+                        PDFSetting, WordSetting, ExcelSetting, StandardSetting, ErrorSetting, console, primaryStage, progressBar,
+                        amFromSetting, amToSetting, pmFromSetting, pmToSetting);
 
                 //System.out.println("#################");
                 //System.out.println("FINISHED!!!!!!!!!");
