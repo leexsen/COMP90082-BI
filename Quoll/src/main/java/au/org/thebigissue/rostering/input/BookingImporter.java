@@ -10,6 +10,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Month;
@@ -120,7 +121,8 @@ public class BookingImporter {
     public List<List<Workshop>> importBookings(LocalDate rosterStartDate, LocalDate rosterEndDate, Roster roster,
                                                List<FacilitatorShift> facilitatorShifts,
                                                List<GuestSpeakerShift> guestSpeakerShifts,
-                                               List<Workshop> overriddenWorkshops) {
+                                               List<Workshop> overriddenWorkshops,
+                                               ArrayList<String> nonGuestCourses) {
         List<Workshop> workshopList = new ArrayList<>();
         long id = 0;
 
@@ -174,7 +176,7 @@ public class BookingImporter {
                 LocalTime startTime = getTime(formatter.formatCellValue(row.getCell(locationIndex)));
                 LocalTime endTime = startTime.plusHours(1);
                 String location = getLocation(row, locationIndex);
-                boolean facilitatorOnly = false;
+                boolean facilitatorOnly = nonGuestCourses.contains(course);
                 String sheetName = sheet.getSheetName();
 
                 // adding workshop normally (no manual override)

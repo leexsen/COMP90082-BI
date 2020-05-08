@@ -9,7 +9,7 @@ import au.org.thebigissue.rostering.solver.entities.GuestSpeakerShift;
 import au.org.thebigissue.rostering.solver.solution.Roster;
 import au.org.thebigissue.rostering.solver.entities.Workshop;
 import au.org.thebigissue.rostering.solver.variables.GuestSpeaker;
-//import au.org.thebigissue.rostering.solver.variables.DummyGuest;
+import au.org.thebigissue.rostering.solver.variables.DummyGuest;
 import au.org.thebigissue.rostering.input.RosteringImporter;
 
 global HardSoftScoreHolder scoreHolder;
@@ -30,8 +30,8 @@ end
 // A guest speaker can only attend one workshop at a time
 rule "Guest speaker double-booked"
     when
-        $leftWorkshop : Workshop($leftId : id, $leftGuestSpeaker : guestSpeakerShift)
-        Workshop(id > $leftId, guestSpeakerShift == $leftGuestSpeaker, hasOverlap($leftWorkshop))
+        $leftWorkshop : Workshop($leftId : id, $leftGuestSpeaker : guestSpeakerShift, facilitatorOnly == false)
+        Workshop(id > $leftId, guestSpeakerShift == $leftGuestSpeaker, hasOverlap($leftWorkshop), facilitatorOnly == false)
     then
         scoreHolder.addHardConstraintMatch(kcontext, -1);
 end
@@ -49,8 +49,8 @@ end
 // A guest speaker can only attend workshops within their availability
 rule "Guest speaker is unavailable"
     when
-        $workshop : Workshop($guestSpeakerShift : guestSpeakerShift)
-        GuestSpeakerShift(this == $guestSpeakerShift, staff.isUnavailable($workshop))
+        $workshop : Workshop($guestSpeakerShift : guestSpeakerShift, facilitatorOnly == false)
+        GuestSpeakerShift(this == $guestSpeakerShift, staff.isUnavailable($workshop), !staff.isDummy())
     then
         scoreHolder.addHardConstraintMatch(kcontext, -1);
 end
@@ -67,13 +67,12 @@ end
 // Guest Speaker can only be allocated to Workshops they are trained for
 rule "Guest Speaker is not trained for course"
     when
-        Workshop($courseName : course, $guestSpeakerShift : guestSpeakerShift)
-        GuestSpeakerShift(this == $guestSpeakerShift, !(staff.isTrained($courseName)))
+        Workshop($courseName : course, $guestSpeakerShift : guestSpeakerShift, facilitatorOnly == false)
+        GuestSpeakerShift(this == $guestSpeakerShift, !(staff.isTrained($courseName)), !staff.isDummy())
     then
         scoreHolder.addHardConstraintMatch(kcontext, -1);
 end
 
-/*
 // Certain Courses do not need a guest speaker
 rule "Guest speaker assigned to course that does not need a guest speaker"
     when
@@ -82,8 +81,7 @@ rule "Guest speaker assigned to course that does not need a guest speaker"
     then
         scoreHolder.addHardConstraintMatch(kcontext, -1);
 end
-*/
-/*
+
 rule "Guest speaker required, but not assigned"
     when
         Workshop($courseName : course, $guestSpeakerShift : guestSpeakerShift, facilitatorOnly == false)
@@ -91,7 +89,6 @@ rule "Guest speaker required, but not assigned"
     then
         scoreHolder.addHardConstraintMatch(kcontext, -1);
 end
-*/
 
 // Do not roster staff back-to-back if different location - facilitators
 rule "Back-to-back workshops with different location (Facilitator)"
@@ -107,10 +104,10 @@ end
 // Do not roster staff back-to-back if different location - guest speakers
 rule "Back-to-back workshops with different location (Guest Speaker)"
     when
-        $workshop1 : Workshop($workshop1EndTime : endDateTime, $location : location, $shift : guestSpeakerShift)
+        $workshop1 : Workshop($workshop1EndTime : endDateTime, $location : location, $shift : guestSpeakerShift, facilitatorOnly == false)
 
         // check that workshop 2 has same guest speaker, different location and starts within 30 min after the end of workshop 1
-        $workshop2 : Workshop($shift == guestSpeakerShift, !($location.equals(location)), $workshop2EndTime : endDateTime, !($workshop1EndTime.isAfter(startDateTime)), $workshop1EndTime.plusMinutes(30).isAfter(startDateTime))
+        $workshop2 : Workshop($shift == guestSpeakerShift, !($location.equals(location)), $workshop2EndTime : endDateTime, !($workshop1EndTime.isAfter(startDateTime)), $workshop1EndTime.plusMinutes(30).isAfter(startDateTime), facilitatorOnly == false)
     then
         scoreHolder.addHardConstraintMatch(kcontext, -1);
 end
@@ -129,10 +126,10 @@ end
 // Do not roster staff on a second workshop within 120 minutes in another location if first location is offsite - guest speakers
 rule "Back-to-back workshops - offsite locations (guest speakers)"
     when
-        $workshop1 : Workshop($workshop1EndTime : endDateTime, location.equals("Other"), $offsite : offsite, $shift : guestSpeakerShift)
+        $workshop1 : Workshop($workshop1EndTime : endDateTime, location.equals("Other"), $offsite : offsite, $shift : guestSpeakerShift, facilitatorOnly == false)
 
         // check that workshop 2 has same facilitator, differection location and starts within 120 min after the end of workshop 1
-        $workshop2 : Workshop($shift == guestSpeakerShift, !$offsite.equals(offsite), $workshop2EndTime : endDateTime, !($workshop1EndTime.isAfter(startDateTime)), $workshop1EndTime.plusMinutes(120).isAfter(startDateTime))
+        $workshop2 : Workshop($shift == guestSpeakerShift, !$offsite.equals(offsite), $workshop2EndTime : endDateTime, !($workshop1EndTime.isAfter(startDateTime)), $workshop1EndTime.plusMinutes(120).isAfter(startDateTime), facilitatorOnly == false)
     then
         scoreHolder.addHardConstraintMatch(kcontext, -1);
 end
@@ -142,15 +139,15 @@ rule "Facilitator: max 6 workshops per day"
     when
         FacilitatorShift($num : getNumWorkshops() > 6)
     then
-        scoreHolder.addHardConstraintMatch(kcontext, -(2 ^ ($num - 6)) * 100);
+        scoreHolder.addHardConstraintMatch(kcontext, -(2 ^ ($num - 6)) * 2);
 end
 
 // A guest speaker can only attend a maximum of 2 workshops per day
 rule "Guest speaker: max 2 workshops per day"
     when
-        GuestSpeakerShift($num : getNumWorkshops() > 2)
+        GuestSpeakerShift($num : getNumWorkshops() > 2, !staff.isDummy())
     then
-        scoreHolder.addHardConstraintMatch(kcontext, -(2 ^ ($num - 2)) * 200);
+        scoreHolder.addHardConstraintMatch(kcontext, -(2 ^ ($num - 2)) * 2);
 end
 
 // A facilitator can attend a maximum of $maxSession workshops per week
@@ -158,15 +155,15 @@ rule "Facilitator: max $maxSession(defineded in the Execl file) workshops per we
     when
         FacilitatorShift($num : getNumWorkshopsPerWeek() > $maxSessions : maxSessions)
     then
-        scoreHolder.addHardConstraintMatch(kcontext, -(2 ^ ($num - $maxSessions)) * 100);
+        scoreHolder.addHardConstraintMatch(kcontext, -(2 ^ ($num - $maxSessions)) * 2);
 end
 
 // A guest speaker can only attend a maximum of $maxSession workshops per week
 rule "Guest speaker: max $maxSession(defineded in the Execl file) workshops per week"
     when
-        GuestSpeakerShift($num : getNumWorkshopsPerWeek() > $maxSessions : maxSessions)
+        GuestSpeakerShift($num : getNumWorkshopsPerWeek() > $maxSessions : maxSessions, !staff.isDummy())
     then
-        scoreHolder.addHardConstraintMatch(kcontext, -(2 ^ ($num - $maxSessions)) * 200);
+        scoreHolder.addHardConstraintMatch(kcontext, -(2 ^ ($num - $maxSessions)) * 2);
 end
 
 // ############################################################################
@@ -184,8 +181,8 @@ end
 
 rule "Maximise utilisation - guest speaker"
     when
-        $workshop : Workshop($guestSpeakerShift : guestSpeakerShift)
-        GuestSpeakerShift(this == $guestSpeakerShift, $utilisation : getUtilisation())
+        $workshop : Workshop($guestSpeakerShift : guestSpeakerShift, facilitatorOnly == false)
+        GuestSpeakerShift(this == $guestSpeakerShift, $utilisation : getUtilisation(), !staff.isDummy())
     then
         scoreHolder.addSoftConstraintMatch(kcontext, $utilisation);
 end
@@ -222,7 +219,7 @@ rule "Max 3 workshops in a row without break - facilitator"
         $workshop4 : Workshop($shift == facilitatorShift, !($workshop3EndTime.isAfter(startDateTime)), $workshop3EndTime.plusMinutes(30).isAfter(startDateTime))
 
     then
-        scoreHolder.addSoftConstraintMatch(kcontext, -200);
+        scoreHolder.addSoftConstraintMatch(kcontext, -100);
 end
 
 
@@ -231,7 +228,7 @@ rule "Avoid single-workshop shifts for casual facilitators - facilitator"
         $workshop : Workshop($facilitatorShift : facilitatorShift)
         FacilitatorShift(this == $facilitatorShift, getNumWorkshops() == 1, staff.isCasualStaff())
     then
-        scoreHolder.addSoftConstraintMatch(kcontext, -1); // changed to -1. if too big it creates a score trap.
+        scoreHolder.addSoftConstraintMatch(kcontext, -50); // changed to -1. if too big it creates a score trap.
 end
 
 
@@ -240,7 +237,7 @@ rule "Allocate casual facilitators only when really necessary - facilitator"
         $workshop : Workshop($facilitatorShift : facilitatorShift)
         FacilitatorShift(this == $facilitatorShift, staff.isCasualStaff())
     then
-        scoreHolder.addSoftConstraintMatch(kcontext, -200);
+        scoreHolder.addSoftConstraintMatch(kcontext, -100);
 end
 
 

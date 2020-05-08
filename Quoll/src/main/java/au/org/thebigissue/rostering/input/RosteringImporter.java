@@ -4,6 +4,7 @@ import au.org.thebigissue.rostering.solver.entities.FacilitatorShift;
 import au.org.thebigissue.rostering.solver.entities.GuestSpeakerShift;
 import au.org.thebigissue.rostering.solver.entities.Workshop;
 import au.org.thebigissue.rostering.solver.solution.Roster;
+import au.org.thebigissue.rostering.solver.variables.DummyGuest;
 import au.org.thebigissue.rostering.solver.variables.Staff;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -38,6 +39,8 @@ import java.util.List;
 //Also needed is a generic cell reading in method.
 
 public class RosteringImporter {
+    // tracks the courses that do not need a guest speaker
+    ArrayList<String> nonGuestCourses;
 /*
 
     private boolean FACILITATOR = false;
@@ -211,7 +214,8 @@ public class RosteringImporter {
 
         this.excelFile = excelFile;
 
-        // this.nonGuestCourses = noGuestCourses();
+        this.nonGuestCourses = new ArrayList<>();
+        this.nonGuestCourses.add("P123");
 
         Roster roster = new Roster();
         roster.setId(0L);
@@ -228,15 +232,13 @@ public class RosteringImporter {
         ArrayList<Staff> facilitators = availabilityImporter.getFacilitatorList();
         ArrayList<Staff> guestSpeakers = availabilityImporter.getGuestspeakerList();
 
-        /*
+
         // need as many dummy guest speakers as there are courses that don't require a guest speaker
-        String[] noGuestCourseList = getNoGuestCourseList();
+        String[] noGuestCourseList = nonGuestCourses.toArray(String[]::new);
         ArrayList<Staff> dummyGuests = dummyList(noGuestCourseList);
         // add dummy guests to the guestSpeakers list
         guestSpeakers.addAll(dummyGuests);
-        //System.out.println("***************************************************************************\n" +
-        // Arrays.toString(guestSpeakers.toArray()));
-        */
+
 
         roster.setShiftList(facilitators, guestSpeakers, rosterStartDate, rosterEndDate);
         facilitatorShifts = roster.getFacilitatorShiftList();
@@ -246,7 +248,7 @@ public class RosteringImporter {
 
         BookingImporter bookingImporter = new BookingImporter(excelFile);
         List<List<Workshop>> result = bookingImporter.importBookings(rosterStartDate, rosterEndDate, roster, facilitatorShifts,
-                guestSpeakerShifts, overriddenWorkshops);
+                guestSpeakerShifts, overriddenWorkshops, nonGuestCourses);
         List<Workshop> workshopList = result.get(0);
         overriddenWorkshops = result.get(1);
         roster.setWorkshopList(workshopList);
@@ -266,6 +268,23 @@ public class RosteringImporter {
                 return false;
         }
         return true;
+    }
+
+    // generates n dummy guests and returns them in a list
+    private ArrayList<Staff> dummyList(String[] courseList){
+        ArrayList<Staff> dummyGuests = new ArrayList<>();
+        for(int i = 0 ; i < courseList.length ; i++){
+            dummyGuests.add(new DummyGuest(courseList));
+        }
+        return dummyGuests;
+    }
+
+    // used in DRL rule to find if a course name matches on of those in nonGuest-course list
+    public boolean isNonGuestWorkshop(String course){
+        if(nonGuestCourses.contains(course)){
+            return true;
+        }
+        return false;
     }
 /*
     // This imports the facilitators first and last names and their availability

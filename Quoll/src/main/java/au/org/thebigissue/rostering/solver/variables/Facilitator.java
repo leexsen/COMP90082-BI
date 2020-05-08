@@ -14,8 +14,6 @@ public class Facilitator extends Staff {
         this.isCasualStaff = isCasualStaff;
     }
 
-
-
     public boolean isTrained(String courseName) {
         return super.isTrained(courseName);
     }
