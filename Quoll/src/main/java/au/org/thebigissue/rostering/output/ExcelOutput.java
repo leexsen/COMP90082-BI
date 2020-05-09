@@ -2,6 +2,7 @@ package au.org.thebigissue.rostering.output;
 
 import au.org.thebigissue.rostering.solver.entities.Workshop;
 import au.org.thebigissue.rostering.solver.solution.Roster;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -55,7 +56,12 @@ public class ExcelOutput {
             //System.out.println("Read in Guest:"+workbook.getSheetAt(sheet).getRow(row+OFFSET).getCell(column+1).getStringCellValue());
 
             //Write it
-            workbook.getSheet(sheetName).getRow(facilitatorRow).getCell(facilitatorColumn).setCellValue(facilitator);
+            Cell facilitatorCell =  workbook.getSheet(sheetName).getRow(facilitatorRow).getCell(facilitatorColumn);
+
+            if (facilitatorCell == null) {
+                facilitatorCell = workbook.getSheet(sheetName).getRow(facilitatorRow).createCell(facilitatorColumn);
+            }
+            facilitatorCell.setCellValue(facilitator);
 
             //System.out.println("Made it again!"+column);
 
@@ -68,7 +74,12 @@ public class ExcelOutput {
 
 
             //Write it
-            workbook.getSheet(sheetName).getRow(guestRow).getCell(guestColumn).setCellValue(guest);
+            Cell guestCell = workbook.getSheet(sheetName).getRow(guestRow).getCell(guestColumn);
+
+            if (guestCell == null) {
+                guestCell = workbook.getSheet(sheetName).getRow(guestRow).createCell(guestColumn);
+            }
+            guestCell.setCellValue(guest);
 
         }
         //Close the file
