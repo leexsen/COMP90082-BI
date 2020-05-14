@@ -151,7 +151,7 @@ rule "Guest speaker: max 2 workshops per day"
 end
 
 // A facilitator can attend a maximum of $maxSession workshops per week
-rule "Facilitator: max $maxSession(defineded in the Execl file) workshops per week"
+rule "Facilitator: max $maxSession(defineded in the Excel file) workshops per week"
     when
         FacilitatorShift($num : getNumWorkshopsPerWeek() > $maxSessions : maxSessions)
     then
@@ -159,7 +159,7 @@ rule "Facilitator: max $maxSession(defineded in the Execl file) workshops per we
 end
 
 // A guest speaker can only attend a maximum of $maxSession workshops per week
-rule "Guest speaker: max $maxSession(defineded in the Execl file) workshops per week"
+rule "Guest speaker: max $maxSession(defineded in the Excel file) workshops per week"
     when
         GuestSpeakerShift($num : getNumWorkshopsPerWeek() > $maxSessions : maxSessions, !staff.isDummy())
     then

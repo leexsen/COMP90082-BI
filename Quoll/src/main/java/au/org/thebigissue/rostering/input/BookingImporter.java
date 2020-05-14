@@ -175,7 +175,7 @@ public class BookingImporter {
                 int locationIndex = getLocationIndex(row);
                 LocalTime startTime = getTime(formatter.formatCellValue(row.getCell(locationIndex)));
                 LocalTime endTime = startTime.plusHours(1);
-                String location = getLocation(row, locationIndex);
+                String location = BookingColumnIndex.of(locationIndex).getDisplayName();
                 boolean facilitatorOnly = nonGuestCourses.contains(course);
                 String sheetName = sheet.getSheetName();
 
@@ -307,17 +307,6 @@ public class BookingImporter {
                 month = null;
         }
         return month;
-    }
-
-    private String getLocation(Row row, int locationIndex) {
-        String location = null;
-        if (locationIndex == BookingColumnIndex.OTHER.getValue()) {
-            location = formatter.formatCellValue(row.getCell(BookingColumnIndex.LOCATION.getValue()));
-        } else {
-            location = BookingColumnIndex.of(locationIndex).getDisplayName();
-        }
-
-        return location;
     }
 
     // check the data format of the row is valid

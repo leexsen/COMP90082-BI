@@ -327,7 +327,11 @@ public class Workshop extends AbstractPersistable {
         result.add(startTime + " - " + endTime);
         result.add(school);
         result.add(course);
-        result.add(location);
+
+        if (location.equals("Other"))
+            result.add(offsite);
+        else
+            result.add(location);
 
         if (facilitatorShift != null)
             result.add(facilitatorShift.getStaffName());
