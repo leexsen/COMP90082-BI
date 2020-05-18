@@ -19,6 +19,8 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 enum BookingColumnIndex {
     DAY(0, null),
@@ -85,6 +87,7 @@ enum BookingColumnIndex {
 
 public class BookingImporter {
     private final String TIME_REGEX = "(1[012]|[1-9])(.[0-5][0-9])?(am|pm)";
+    private final String YEAR_REGEX = "\\d{4}";
     private final String JAN_SHEET_NAME = "MJan";
     private final String FEB_SHEET_NAME = "MFeb";
     private final String MAR_SHEET_NAME = "MMar";
@@ -129,6 +132,7 @@ public class BookingImporter {
         for (Sheet sheet: bookingSheets) {
 
             int day = -1;
+            int year = getYear(sheet);
 
             for (Row row : sheet) {
 
@@ -151,7 +155,7 @@ public class BookingImporter {
                     day = (int) row.getCell(BookingColumnIndex.DATE.getValue()).getNumericCellValue();
                 }
 
-                LocalDate date = LocalDate.of(2019, getMonth(sheet), day);
+                LocalDate date = LocalDate.of(year, getMonth(sheet), day);
 
                 // only add workshops if they are within specified roster dates
                 if (date.isBefore(rosterStartDate) || date.isAfter(rosterEndDate))
@@ -307,6 +311,19 @@ public class BookingImporter {
                 month = null;
         }
         return month;
+    }
+
+    private int getYear(Sheet sheet) {
+        String string = formatter.formatCellValue(sheet.getRow(0).getCell(0));
+        Matcher m = Pattern.compile(YEAR_REGEX).matcher(string);
+
+        if (m.find()) {
+            return Integer.parseInt(m.group());
+        } else {
+            String sheetName = sheet.getSheetName();
+            throw new InvalidDataException("The data format is invalid in row 1 of the worksheet " + "'" + sheetName
+                    + "'|" + "Check that a year is included e.g. Melbourne February 2020");
+        }
     }
 
     // check the data format of the row is valid
