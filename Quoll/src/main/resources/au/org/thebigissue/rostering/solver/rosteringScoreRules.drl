@@ -228,7 +228,7 @@ rule "Avoid single-workshop shifts for casual facilitators - facilitator"
         $workshop : Workshop($facilitatorShift : facilitatorShift)
         FacilitatorShift(this == $facilitatorShift, getNumWorkshops() == 1, staff.isCasualStaff())
     then
-        scoreHolder.addSoftConstraintMatch(kcontext, -50); // changed to -1. if too big it creates a score trap.
+        scoreHolder.addSoftConstraintMatch(kcontext, -50);
 end
 
 
